@@ -1,12 +1,12 @@
 "use client"
-import {useTelegramUser} from "@/fsd/app/providers/TelegramUser";
+import { CatalogPage } from './CatalogPage';
+import { BottomNavigation } from '@/fsd/shared/components/BottomNavigation';
 
 export const MainPage = () => {
-    const {user} = useTelegramUser()
-    console.log(user)
-    return(
-        <div>
-            {user?.first_name}
+    return (
+        <div className="min-h-screen pb-16">
+            <CatalogPage />
+            <BottomNavigation />
         </div>
-    )
+    );
 }
