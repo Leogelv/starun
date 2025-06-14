@@ -1,0 +1,40 @@
+{
+  "name": "mini-app-template",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "dev:https": "next dev --turbopack --experimental-https",
+    "dev:custom-https": "node server.js",
+    "cert:generate": "mkcert -cert-file 192.168.1.241+3.pem -key-file 192.168.1.241+3-key.pem 192.168.1.241 localhost 127.0.0.1 ::1",
+    "cert:install": "mkcert -install",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@ant-design/nextjs-registry": "^1.0.2",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.49.8",
+    "@tanstack/react-query": "^5.77.0",
+    "@telegram-apps/sdk-react": "^3.3.0",
+    "antd": "^5.25.2",
+    "axios": "^1.9.0",
+    "clsx": "^2.1.1",
+    "next": "15.3.2",
+    "nextjs-toploader": "^3.8.16",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.2",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
