@@ -3,7 +3,7 @@ import {ProfilePage} from "@/fsd/pages/client/ProfilePage";
 
 export default function Page(){
     return(
-        <ClientPage>
+        <ClientPage hideMenuButton={true}>
             <ProfilePage/>
         </ClientPage>
     )

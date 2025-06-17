@@ -120,7 +120,7 @@ export const ProfilePage = () => {
                         onClick={() => hapticFeedback.impactOccurred('medium')}
                         className="block relative overflow-hidden group"
                     >
-                        <div className="relative bg-white/10 backdrop-blur-lg border border-white/30 rounded-2xl p-6 transition-all duration-300 group-hover:border-white/50 group-hover:shadow-lg group-hover:shadow-white/20">
+                                                    <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-white/20">
                             <div className="absolute inset-0 bg-gradient-to-r from-green-600/10 to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             
                             <div className="relative flex items-center justify-between">
@@ -156,7 +156,7 @@ export const ProfilePage = () => {
                         onClick={() => hapticFeedback.impactOccurred('medium')}
                         className="block relative overflow-hidden group"
                     >
-                        <div className="relative bg-white/10 backdrop-blur-lg border border-white/30 rounded-2xl p-6 transition-all duration-300 group-hover:border-white/50 group-hover:shadow-lg group-hover:shadow-white/20">
+                        <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-white/20">
                             <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-green-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             
                             <div className="relative flex items-center justify-between">
@@ -186,12 +186,12 @@ export const ProfilePage = () => {
 
                 {/* Version info */}
                 <div className="mt-12 text-center">
-                    <p className="text-white/40 text-xs">StarUnity v1.0</p>
+                   
                 </div>
             </div>
             
             {/* Glass Bottom Bar */}
-            <GlassBottomBar />
+            <GlassBottomBar showTextInput={false} />
         </div>
     );
 };

@@ -3,7 +3,7 @@ import {CatalogPage} from "@/fsd/pages/client/CatalogPage";
 
 export default function Page(){
     return(
-        <ClientPage>
+        <ClientPage hideMenuButton={true}>
             <CatalogPage/>
         </ClientPage>
     )

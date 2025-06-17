@@ -28,7 +28,7 @@ export const MaterialCard = ({ material, compact = false }: MaterialCardProps) =
     <div className={`relative group ${compact ? 'min-w-[280px]' : 'w-full'}`}>
       <div 
         onClick={() => handleMaterialClick(material.message_link)}
-        className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/10 cursor-pointer transition-all hover:border-white/20 h-full"
+        className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl rounded-2xl p-4 cursor-pointer transition-all hover:shadow-lg hover:shadow-white/10 h-full"
       >
         <div className="flex items-start justify-between mb-2">
           <h3 className={`${compact ? 'text-base' : 'text-lg'} font-semibold text-white pr-3 line-clamp-2`}>

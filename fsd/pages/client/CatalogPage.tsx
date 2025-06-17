@@ -40,7 +40,7 @@ const MaterialCard = memo(({
     <div className="w-full">
       <div 
         onClick={handleCardClick}
-        className="bg-white/10 backdrop-blur-lg border border-white/30 rounded-2xl p-4 cursor-pointer transition-all duration-300 hover:border-white/50 hover:shadow-lg hover:shadow-blue-500/20 hover:scale-[1.02] group w-full h-full min-h-[140px] flex flex-col"
+        className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 hover:scale-[1.02] group w-full h-full min-h-[140px] flex flex-col"
       >
         <div className="flex items-start justify-between mb-3 flex-1">
           <h3 className="text-base font-semibold text-white pr-3 leading-snug line-clamp-2 font-poppins flex-1">
@@ -105,7 +105,7 @@ const ExpandedCardModal = ({ material, isOpen, onClose, onNavigate }: {
             className="fixed inset-x-4 top-1/2 -translate-y-1/2 max-w-lg mx-auto z-50"
             style={{ maxWidth: '90vw' }}
           >
-            <div className="bg-black/50 backdrop-blur-xl border border-white/30 rounded-3xl p-6 shadow-xl shadow-blue-500/20">
+            <div className="bg-black/50 backdrop-blur-xl rounded-3xl p-6 shadow-xl shadow-blue-500/20">
               <button
                 onClick={onClose}
                 className="absolute top-4 right-4 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/30 hover:scale-110 hover:shadow-lg"
@@ -193,8 +193,8 @@ export const CatalogPage = () => {
 
       {/* Scrollable content with optimized rendering */}
       <div className="relative z-10 min-h-screen pb-32 w-full">
-        {/* Fixed header with categories - full width */}
-        <div className="sticky top-0 z-20 bg-black/20 backdrop-blur-xl border-b border-white/10 w-full" style={{ paddingTop: 'max(95px, env(safe-area-inset-top))' }}>
+        {/* Fixed header with categories - full screen width */}
+        <div className="fixed top-0 left-0 right-0 z-20 bg-black/20 backdrop-blur-xl" style={{ paddingTop: 'max(95px, env(safe-area-inset-top))' }}>
           <div className="w-full px-4 pb-4">
             <h2 className="text-2xl font-bold text-white mb-4 text-glow font-poppins text-center">Материалы</h2>
             
@@ -206,7 +206,7 @@ export const CatalogPage = () => {
                   className={`flex-shrink-0 px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                     !activeSubtopic 
                       ? 'bg-gradient-sky text-white shadow-lg shadow-blue-500/40 scale-105' 
-                      : 'bg-white/10 backdrop-blur-lg border border-white/30 text-white/80 hover:text-white hover:border-white/50 hover:scale-105'
+                      : 'bg-white/10 backdrop-blur-lg text-white/80 hover:text-white hover:scale-105'
                   }`}
                   style={{ scrollSnapAlign: 'start' }}
                 >
@@ -219,7 +219,7 @@ export const CatalogPage = () => {
                     className={`flex-shrink-0 px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                       activeSubtopic === subtopic.id
                         ? 'bg-gradient-sky text-white shadow-lg shadow-blue-500/40 scale-105' 
-                        : 'bg-white/10 backdrop-blur-lg border border-white/30 text-white/80 hover:text-white hover:border-white/50 hover:scale-105'
+                        : 'bg-white/10 backdrop-blur-lg text-white/80 hover:text-white hover:scale-105'
                     }`}
                     style={{ scrollSnapAlign: 'start' }}
                   >
@@ -231,8 +231,8 @@ export const CatalogPage = () => {
           </div>
         </div>
 
-        {/* Materials grid - full width optimized */}
-        <div className="w-full px-4 pt-6">
+        {/* Materials grid - full width optimized with top margin for fixed header */}
+        <div className="w-full px-4 pt-40">
           {materialsLoading ? (
             <div className="flex justify-center py-12">
               <div className="w-12 h-12 rounded-full border-2 border-blue-500 border-t-transparent animate-spin shadow-glow"></div>
@@ -264,7 +264,7 @@ export const CatalogPage = () => {
                 {activeSubtopic && (
                   <button
                     onClick={() => setActiveSubtopic(undefined)}
-                    className="mt-6 px-6 py-3 bg-white/10 backdrop-blur-lg border border-white/30 text-white/80 rounded-full text-sm font-medium hover:text-white hover:scale-105 transition-all duration-300"
+                    className="mt-6 px-6 py-3 bg-white/10 backdrop-blur-lg text-white/80 rounded-full text-sm font-medium hover:text-white hover:scale-105 transition-all duration-300"
                   >
                     Показать все практики
                   </button>
@@ -284,7 +284,7 @@ export const CatalogPage = () => {
       />
       
       {/* Glass Bottom Bar */}
-      <GlassBottomBar />
+      <GlassBottomBar showTextInput={false} />
     </div>
   );
 };

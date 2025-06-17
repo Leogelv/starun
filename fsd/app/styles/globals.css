@@ -2,33 +2,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Unbounded:wght@400;500;600;700&display=swap');
 
 :root {
-  --background: #001E63;
-  --foreground: #FFFFFF;
+  --background: #061344;
+  --foreground: #EEF2FF;
   
-  /* Deep blue theme colors */
-  --blue-50: #f0f7ff;
-  --blue-100: #e0efff;
-  --blue-200: #c7e2ff;
-  --blue-300: #6e8db5;
-  --blue-400: #4e78aa;
-  --blue-500: #3C66FF;
-  --blue-600: #2a63a1;
-  --blue-700: #155595;
-  --blue-800: #073e86;
-  --blue-900: #05246c;
-  --blue-950: #001E63;
+  /* Night-Sky Base theme colors */
+  --night-sky-base: #061344;
+  --night-sky-depth: #0B1F6C;
+  --royal-blue: #1541A8;
+  --gradient-lift: #1E5BD1;
+  --electric-blue: #267FFF;
+  --smoky-cards: #87A4D8;
+  --arctic-light: #C8D7F1;
   
-  /* Dark backgrounds */
-  --dark-bg: #070913;
-  --dark-surface: #071c47;
-  --dark-surface-light: #031358;
+  /* Glow Accents */
+  --star-glow: #B7FF97;
+  --cyan-neon: #42E8FF;
+  --ultra-violet: #6E5CF7;
+  
+  /* Neutrals */
+  --charcoal-black: #0A1320;
+  --graphite-slate: #1E2E3A;
+  --lunar-white: #EEF2FF;
   
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #3C66FF 0%, #001E63 100%);
-  --gradient-accent: linear-gradient(135deg, #3C66FF 0%, #6e8db5 100%);
-  --gradient-dark: linear-gradient(180deg, #070913 0%, #031358 100%);
-  --gradient-glow: radial-gradient(ellipse at top, #05246c 0%, transparent 50%);
-  --gradient-sky: linear-gradient(135deg, #001E63 0%, #3C66FF 100%);
+  --gradient-primary: linear-gradient(135deg, #1541A8 0%, #061344 100%);
+  --gradient-accent: linear-gradient(135deg, #267FFF 0%, #1E5BD1 100%);
+  --gradient-dark: linear-gradient(180deg, #061344 0%, #0B1F6C 100%);
+  --gradient-glow: radial-gradient(ellipse at top, #1E5BD1 0%, transparent 50%);
+  --gradient-sky: linear-gradient(135deg, #1541A8 0%, #267FFF 100%);
+  --gradient-electric: linear-gradient(135deg, #267FFF 0%, #42E8FF 100%);
 }
 
 @theme inline {
@@ -39,8 +41,8 @@
 }
 
 body {
-  background: var(--dark-bg);
-  color: var(--foreground);
+  background: var(--night-sky-base);
+  color: var(--lunar-white);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   letter-spacing: -0.01em;
   min-height: 100vh;
@@ -56,7 +58,7 @@ body::before {
   right: 0;
   bottom: 0;
   background: var(--gradient-glow);
-  opacity: 0.4;
+  opacity: 0.3;
   pointer-events: none;
   z-index: 0;
 }
@@ -97,30 +99,36 @@ body::before {
 
 /* Glassmorphism effect */
 .glass {
-  background: rgba(60, 102, 255, 0.1);
+  background: rgba(135, 164, 216, 0.1);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .glass-dark {
-  background: rgba(7, 9, 19, 0.8);
+  background: rgba(10, 19, 32, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Glow effects */
 .glow-blue {
-  box-shadow: 0 0 40px rgba(60, 102, 255, 0.4);
+  box-shadow: 0 0 40px rgba(38, 127, 255, 0.4);
 }
 
 .glow-blue-sm {
-  box-shadow: 0 0 20px rgba(60, 102, 255, 0.3);
+  box-shadow: 0 0 20px rgba(38, 127, 255, 0.3);
 }
 
 .text-glow {
-  text-shadow: 0 0 20px rgba(60, 102, 255, 0.6);
+  text-shadow: 0 0 20px rgba(66, 232, 255, 0.6);
+}
+
+.glow-star {
+  box-shadow: 0 0 30px rgba(183, 255, 151, 0.5);
+}
+
+.glow-violet {
+  box-shadow: 0 0 25px rgba(110, 92, 247, 0.4);
 }
 
 /* Catalog styles */
@@ -134,14 +142,12 @@ body::before {
   border-radius: 20px;
   padding: 8px 16px;
   margin-right: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.2s;
   color: #ffffff;
 }
 
 .meditation-tabs .ant-tabs-tab-active {
   background: var(--gradient-accent);
-  border-color: transparent;
   box-shadow: 0 0 20px rgba(147, 51, 234, 0.4);
 }
 
@@ -221,12 +227,12 @@ body::before {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3C66FF;
+  background: #267FFF;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2a63a1;
+  background: #1E5BD1;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

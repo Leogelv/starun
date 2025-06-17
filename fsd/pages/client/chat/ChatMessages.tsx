@@ -27,10 +27,10 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
         {messages.map((msg, idx) => (
           <div key={idx} className="space-y-3">
             <div className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] px-4 py-3 rounded-2xl backdrop-blur-lg border ${
+              <div className={`max-w-[80%] px-4 py-3 rounded-2xl backdrop-blur-lg ${
                 msg.role === 'user' 
-                  ? 'bg-gradient-sky border-blue-400/40 text-white shadow-lg shadow-blue-500/20' 
-                  : 'bg-white/10 border-white/30 text-white shadow-lg shadow-white/20'
+                  ? 'bg-gradient-sky text-white shadow-lg shadow-blue-500/20' 
+                  : 'bg-white/10 text-white shadow-lg shadow-white/20'
               }`}>
                 <MarkdownMessage content={msg.content} className="text-sm" />
               </div>
@@ -58,7 +58,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
         
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-white/10 border border-white/30 backdrop-blur-lg px-4 py-3 rounded-2xl shadow-lg shadow-white/20">
+            <div className="bg-white/10 backdrop-blur-lg px-4 py-3 rounded-2xl shadow-lg shadow-white/20">
               <div className="flex space-x-1">
                 <div className="w-2 h-2 bg-blue-300 rounded-full animate-bounce shadow-sm shadow-blue-300/50"></div>
                 <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce shadow-sm shadow-blue-400/50" style={{ animationDelay: '0.1s' }}></div>

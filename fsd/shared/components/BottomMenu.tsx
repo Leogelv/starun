@@ -50,7 +50,7 @@ export const BottomMenu = () => {
             {/* Glass morphism background */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
             
-            <div className='relative glass-dark border-t border-purple-500/20'>
+            <div className='relative glass-dark'>
                 {/* Animated glow line */}
                 <motion.div 
                     className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-500/60 to-transparent"
