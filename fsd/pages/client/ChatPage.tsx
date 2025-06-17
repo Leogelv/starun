@@ -542,7 +542,7 @@ export const ChatPage = () => {
       {/* UI overlay */}
       <div className="relative z-10 h-full flex flex-col">
         {/* Top section with title */}
-        <div className="flex-shrink-0 pt-20 pb-4 text-center bg-gradient-to-b from-black/70 via-black/40 to-transparent">
+        <div className="flex-shrink-0 pb-4 text-center bg-gradient-to-b from-black/70 via-black/40 to-transparent" style={{ paddingTop: 'max(95px, env(safe-area-inset-top))' }}>
           <h2 className="text-2xl font-bold text-white mb-2 drop-shadow-lg" style={{ fontFamily: 'Inter Tight, sans-serif' }}>STARUNITY AI HELPER </h2>
 
         </div>

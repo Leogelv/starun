@@ -81,7 +81,7 @@ export const ProfilePage = () => {
                 <div className="absolute top-96 -right-32 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px]"></div>
             </div>
 
-            <div className="relative z-10 px-4 pt-8 pb-4 safe-area-top">
+            <div className="relative z-10 px-4 pb-4" style={{ paddingTop: 'max(95px, env(safe-area-inset-top))' }}>
                 {/* Profile header */}
                 <div className="text-center mb-12">
                     <div className="w-24 h-24 mx-auto mb-4 relative">

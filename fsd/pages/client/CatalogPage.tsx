@@ -41,7 +41,7 @@ export const CatalogPage = () => {
         <div className="absolute top-96 -right-32 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="relative z-10 px-4 pt-8 pb-4 safe-area-top">
+      <div className="relative z-10 px-4 pb-4" style={{ paddingTop: 'max(95px, env(safe-area-inset-top))' }}>
 
         {/* Category pills */}
         <div className="flex gap-2 overflow-x-auto pb-2 mb-8 scrollbar-hide">

@@ -177,7 +177,7 @@ export const BottomMenu = () => {
                 </div>
                 
                 {/* Safe area padding */}
-                <div className="h-safe-area-inset-bottom" />
+                <div className="safe-area-bottom" />
             </div>
         </div>
     )
