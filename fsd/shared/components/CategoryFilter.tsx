@@ -19,14 +19,17 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   onSubtopicChange
 }) => {
   return (
-    <div className="fixed top-0 left-0 right-0 z-20 bg-black/20 backdrop-blur-xl" style={{ paddingTop: '95px' }}>
-      <div className="w-full px-4 pb-4">
-        <h2 className="text-2xl font-bold text-white mb-4 text-glow font-poppins text-center">Материалы</h2>
+    <div className="fixed top-0 left-0 right-0 z-30 bg-black/30 backdrop-blur-xl border-b border-white/10">
+      {/* Заголовок с отступами только внутри */}
+      <div className="pt-24 pb-4 px-4">
+        <h2 className="text-2xl font-bold text-white text-center font-poppins text-glow">
+          Материалы
+        </h2>
       </div>
       
-      {/* Category pills - full viewport width, no safe area */}
+      {/* Категории - полная ширина без отступов */}
       <div className="w-full overflow-x-auto scrollbar-hide">
-        <div className="flex gap-3 pb-4 pl-4" style={{ scrollSnapType: 'x mandatory' }}>
+        <div className="flex gap-3 pb-6 px-4" style={{ scrollSnapType: 'x mandatory' }}>
           <button
             onClick={() => onSubtopicChange(undefined)}
             className={`flex-shrink-0 px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
@@ -52,7 +55,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
               {subtopic.name}
             </button>
           ))}
-          {/* Spacer for scrolling to edge */}
+          {/* Spacer для прокрутки до края */}
           <div className="flex-shrink-0 w-4"></div>
         </div>
       </div>

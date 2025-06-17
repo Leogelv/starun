@@ -95,7 +95,7 @@ const ExpandedCardModal = ({ material, isOpen, onClose, onNavigate }: {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
             onClick={onClose}
           />
           <motion.div
@@ -171,7 +171,7 @@ export const CatalogPage = () => {
 
   if (subtopicsLoading) {
     return (
-      <div className="flex justify-center items-center h-[80vh]">
+      <div className="flex justify-center items-center h-screen bg-gradient-to-b from-blue-950/40 via-blue-900/50 to-blue-950/60">
         <div className="w-12 h-12 rounded-full border-2 border-purple-500 border-t-transparent animate-spin"></div>
       </div>
     );
@@ -180,35 +180,34 @@ export const CatalogPage = () => {
   const expandedMaterial = materials?.find(m => m.id === expandedCard);
 
   return (
-    <div className="min-h-screen overflow-hidden w-full">
-      {/* Background with deep blue gradient */}
-      <div className="fixed inset-0 bg-gradient-to-b from-blue-950/40 via-blue-900/50 to-blue-950/60"></div>
-      <div className="fixed inset-0 backdrop-blur-[0.5px]"></div>
+    <div className="min-h-screen w-full relative">
+      {/* Background Layer - z-0 */}
+      <div className="fixed inset-0 bg-gradient-to-b from-blue-950/40 via-blue-900/50 to-blue-950/60 z-0"></div>
       
-      {/* Background with fixed positioning */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-30">
+      {/* Background effects - z-1 */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-1 opacity-30">
         <div className="absolute top-20 -left-32 w-64 h-64 bg-blue-600/20 rounded-full blur-[100px]"></div>
         <div className="absolute top-96 -right-32 w-96 h-96 bg-blue-400/15 rounded-full blur-[120px]"></div>
         <div className="absolute bottom-40 left-1/2 -translate-x-1/2 w-80 h-80 bg-blue-500/10 rounded-full blur-[100px]"></div>
       </div>
 
-      {/* Scrollable content with optimized rendering */}
-      <div className="relative z-10 min-h-screen pb-32 w-full">
-        {/* Category Filter Component */}
-        <CategoryFilter 
-          subtopics={subtopics || []}
-          activeSubtopic={activeSubtopic}
-          onSubtopicChange={setActiveSubtopic}
-        />
+      {/* Fixed Category Filter - z-30 */}
+      <CategoryFilter 
+        subtopics={subtopics || []}
+        activeSubtopic={activeSubtopic}
+        onSubtopicChange={setActiveSubtopic}
+      />
 
-        {/* Materials grid - full width optimized with top margin for fixed header */}
-        <div className="w-full px-4 pt-44">
+      {/* Main Content - z-10 */}
+      <div className="relative z-10 w-full">
+        {/* Content with proper top margin to avoid header overlap */}
+        <div className="pt-48 pb-32 px-4">
           {materialsLoading ? (
             <div className="flex justify-center py-12">
               <div className="w-12 h-12 rounded-full border-2 border-blue-500 border-t-transparent animate-spin shadow-glow"></div>
             </div>
           ) : (
-            <div className="w-full max-w-none">
+            <div className="w-full">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                 {materials?.map((material) => (
                   <MaterialCard
@@ -245,7 +244,7 @@ export const CatalogPage = () => {
         </div>
       </div>
 
-      {/* Expanded card modal */}
+      {/* Expanded card modal - z-40-50 */}
       <ExpandedCardModal
         material={expandedMaterial}
         isOpen={!!expandedCard}
@@ -253,7 +252,7 @@ export const CatalogPage = () => {
         onNavigate={handleMaterialClick}
       />
       
-      {/* Glass Bottom Bar */}
+      {/* Glass Bottom Bar - z-20 */}
       <GlassBottomBar showTextInput={false} />
     </div>
   );

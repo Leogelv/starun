@@ -17,7 +17,7 @@ export async function GET(request: Request) {
       .from('chat_history')
       .select(`
         *,
-        tg_users:telegram_id (
+        tg_users (
           username,
           first_name,
           last_name,
@@ -44,9 +44,19 @@ export async function GET(request: Request) {
       query = query.ilike('content', `%${search}%`);
     }
     
+    console.log('Chat history query:', {
+      telegramId, sessionId, messageType, search,
+      page, limit, offset
+    });
+    
     const { data, error, count } = await query;
     
-    if (error) throw error;
+    console.log('Chat history query result:', { data: data?.length, error });
+    
+    if (error) {
+      console.error('Chat history query error:', error);
+      throw error;
+    }
     
     // Get total count for pagination
     let countQuery = supabase
