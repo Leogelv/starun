@@ -81,7 +81,7 @@ export const ProfilePage = () => {
                             <img 
                                 src={displayAvatarUrl} 
                                 alt={`${displayName}'s avatar`}
-                                className="relative w-full h-full rounded-full object-cover border-3 border-purple-500/50 shadow-glow"
+                                className="relative w-full h-full rounded-full object-cover shadow-glow"
                                 onError={(e) => {
                                     const target = e.target as HTMLImageElement;
                                     target.style.display = 'none';
@@ -111,8 +111,9 @@ export const ProfilePage = () => {
                     <p className="text-white/60 text-sm font-mono">ID: {displayTelegramId || 'Unknown'}</p>
                 </div>
 
-                {/* Channel buttons with creative design */}
+                {/* Channel buttons with new images and cosmic theme */}
                 <div className="space-y-4 max-w-sm mx-auto">
+                    {/* Зал Созвездий */}
                     <a 
                         href="https://t.me/+CgWZpf-8DVUwY2Qy"
                         target="_blank"
@@ -120,21 +121,21 @@ export const ProfilePage = () => {
                         onClick={() => hapticFeedback.impactOccurred('medium')}
                         className="block relative overflow-hidden group"
                     >
-                                                    <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-white/20">
-                            <div className="absolute inset-0 bg-gradient-to-r from-green-600/10 to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/30">
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             
                             <div className="relative flex items-center justify-between">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 bg-gradient-to-r from-green-500/80 to-blue-500/80 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-lg group-hover:shadow-green-500/30 transition-shadow">
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                            <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                            <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                        </svg>
+                                    <div className="w-14 h-14 rounded-xl overflow-hidden shadow-lg group-hover:shadow-purple-500/30 transition-shadow">
+                                        <img 
+                                            src="/img/zalsozvezdii.png" 
+                                            alt="Зал созвездий"
+                                            className="w-full h-full object-cover"
+                                        />
                                     </div>
                                     <div>
-                                        <h3 className="text-white text-lg font-semibold mb-1 font-poppins">Зал созвездий</h3>
-                                        <p className="text-green-300 text-sm">Присоединяйся к сообществу</p>
+                                        <h3 className="text-white text-lg font-semibold mb-1 font-poppins">Зал Созвездий</h3>
+                                        <p className="text-purple-300 text-sm">пространство StarЮнитцев</p>
                                     </div>
                                 </div>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-purple-400 transform group-hover:translate-x-1 transition-transform">
@@ -142,13 +143,14 @@ export const ProfilePage = () => {
                                 </svg>
                             </div>
                             
-                            {/* Animated particles */}
-                            <div className="absolute top-2 right-2 w-1 h-1 bg-purple-400 rounded-full animate-float opacity-60"></div>
-                            <div className="absolute bottom-4 right-8 w-1.5 h-1.5 bg-pink-400 rounded-full animate-float opacity-40" style={{ animationDelay: '1s' }}></div>
-                            <div className="absolute top-6 right-12 w-1 h-1 bg-purple-300 rounded-full animate-float opacity-50" style={{ animationDelay: '2s' }}></div>
+                            {/* Animated cosmic particles */}
+                            <div className="absolute top-2 right-2 w-1 h-1 bg-purple-400 rounded-full animate-pulse opacity-60"></div>
+                            <div className="absolute bottom-4 right-8 w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse opacity-40" style={{ animationDelay: '1s' }}></div>
+                            <div className="absolute top-6 right-12 w-1 h-1 bg-purple-300 rounded-full animate-pulse opacity-50" style={{ animationDelay: '2s' }}></div>
                         </div>
                     </a>
 
+                    {/* Канал StarUnity */}
                     <a 
                         href="https://t.me/+0zxZzcja4b40YmQy"
                         target="_blank"
@@ -156,30 +158,32 @@ export const ProfilePage = () => {
                         onClick={() => hapticFeedback.impactOccurred('medium')}
                         className="block relative overflow-hidden group"
                     >
-                        <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-white/20">
-                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-green-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-blue-500/30">
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             
                             <div className="relative flex items-center justify-between">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 bg-gradient-to-r from-blue-500/80 to-green-500/80 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-lg group-hover:shadow-blue-500/30 transition-shadow">
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                                            <path d="M22 4C22 4 22 2.73 20.24 2.73C18.64 2.73 17.5 3.87 17.5 3.87L12 8.5L6.5 3.87S5.36 2.73 3.76 2.73C2 2.73 2 4 2 4L12 21L22 4Z" fill="white"/>
-                                        </svg>
+                                    <div className="w-14 h-14 rounded-xl overflow-hidden shadow-lg group-hover:shadow-blue-500/30 transition-shadow">
+                                        <img 
+                                            src="/img/channelimage.png" 
+                                            alt="Канал StarUnity"
+                                            className="w-full h-full object-cover"
+                                        />
                                     </div>
                                     <div>
-                                        <h3 className="text-white text-lg font-semibold mb-1 font-poppins">Канал</h3>
-                                        <p className="text-blue-300 text-sm">Новости и обновления</p>
+                                        <h3 className="text-white text-lg font-semibold mb-1 font-poppins">Канал StarUnity</h3>
+                                        <p className="text-blue-300 text-sm">пульс вселенной</p>
                                     </div>
                                 </div>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-purple-400 transform group-hover:translate-x-1 transition-transform">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-blue-400 transform group-hover:translate-x-1 transition-transform">
                                     <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                 </svg>
                             </div>
                             
-                            {/* Animated particles */}
-                            <div className="absolute bottom-2 left-4 w-1 h-1 bg-blue-400 rounded-full animate-float opacity-60"></div>
-                            <div className="absolute top-4 left-8 w-1.5 h-1.5 bg-purple-400 rounded-full animate-float opacity-40" style={{ animationDelay: '1.5s' }}></div>
-                            <div className="absolute bottom-6 left-16 w-1 h-1 bg-blue-300 rounded-full animate-float opacity-50" style={{ animationDelay: '0.5s' }}></div>
+                            {/* Animated cosmic particles */}
+                            <div className="absolute bottom-2 left-4 w-1 h-1 bg-blue-400 rounded-full animate-pulse opacity-60"></div>
+                            <div className="absolute top-4 left-8 w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse opacity-40" style={{ animationDelay: '1.5s' }}></div>
+                            <div className="absolute bottom-6 left-16 w-1 h-1 bg-blue-300 rounded-full animate-pulse opacity-50" style={{ animationDelay: '0.5s' }}></div>
                         </div>
                     </a>
                 </div>

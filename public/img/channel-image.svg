@@ -1,0 +1,35 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="channelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#7C3AED;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EC4899;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="28" fill="url(#channelGrad)" opacity="0.2"/>
+  
+  <!-- Main channel icon -->
+  <path d="M20 16L44 16C46.2091 16 48 17.7909 48 20L48 36C48 38.2091 46.2091 40 44 40L28 40L20 48L20 20C20 17.7909 21.7909 16 24 16Z" 
+        fill="url(#channelGrad)" filter="url(#glow)"/>
+  
+  <!-- Signal waves -->
+  <circle cx="32" cy="28" r="3" fill="white" opacity="0.9"/>
+  <circle cx="32" cy="28" r="6" fill="none" stroke="white" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="32" cy="28" r="9" fill="none" stroke="white" stroke-width="1" opacity="0.4"/>
+  <circle cx="32" cy="28" r="12" fill="none" stroke="white" stroke-width="0.5" opacity="0.2"/>
+  
+  <!-- Stars -->
+  <circle cx="24" cy="24" r="1" fill="white" opacity="0.8"/>
+  <circle cx="40" cy="20" r="0.8" fill="white" opacity="0.6"/>
+  <circle cx="42" cy="32" r="1.2" fill="white" opacity="0.7"/>
+  <circle cx="26" cy="36" r="0.6" fill="white" opacity="0.5"/>
+</svg> 

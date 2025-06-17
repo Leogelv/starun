@@ -17,7 +17,14 @@ export const MaterialCard = ({ material, compact = false }: MaterialCardProps) =
   const [isExpanded, setIsExpanded] = useState(false);
   
   const handleMaterialClick = (link: string) => {
-    openLink(link);
+    try {
+      // Используем tryInstantView для нативного превью в Telegram
+      openLink(link, { tryInstantView: true });
+    } catch (error) {
+      console.error('Error opening link:', error);
+      // Fallback для старых версий или если tryInstantView не поддерживается
+      openLink(link);
+    }
   };
 
   const displayText = material.description && !isExpanded && material.description.length > 140 

@@ -1,16 +1,42 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/fsd/shared/clients/supabaseClient';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const { data, error } = await supabase
+    const { searchParams } = new URL(request.url);
+    const includeCount = searchParams.get('include_count') === 'true';
+    
+    let query = supabase
       .from('subtopics')
       .select('*')
       .order('name', { ascending: true });
     
+    const { data: subtopics, error } = await query;
+    
     if (error) throw error;
     
-    return NextResponse.json(data);
+    if (includeCount) {
+      // Get material counts for each subtopic
+      const subtopicsWithCount = await Promise.all(
+        subtopics.map(async (subtopic) => {
+          const { count, error: countError } = await supabase
+            .from('materials')
+            .select('id', { count: 'exact' })
+            .eq('subtopic_id', subtopic.id);
+          
+          if (countError) {
+            console.error('Error counting materials for subtopic:', subtopic.id, countError);
+            return { ...subtopic, material_count: 0 };
+          }
+          
+          return { ...subtopic, material_count: count || 0 };
+        })
+      );
+      
+      return NextResponse.json(subtopicsWithCount);
+    }
+    
+    return NextResponse.json(subtopics);
   } catch (error) {
     console.error('Error fetching subtopics:', error);
     return NextResponse.json(
@@ -23,6 +49,24 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    
+    // Check for duplicate name
+    const { data: existing, error: checkError } = await supabase
+      .from('subtopics')
+      .select('id')
+      .eq('name', body.name)
+      .single();
+    
+    if (checkError && checkError.code !== 'PGRST116') {
+      throw checkError;
+    }
+    
+    if (existing) {
+      return NextResponse.json(
+        { error: 'Subtopic with this name already exists' },
+        { status: 409 }
+      );
+    }
     
     const { data, error } = await supabase
       .from('subtopics')
