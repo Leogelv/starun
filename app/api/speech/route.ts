@@ -91,7 +91,12 @@ export async function POST(request: NextRequest) {
         mimeType = 'audio/webm';
       }
       
-      const processedFile = new File([audioFile], fileName, { type: mimeType });
+      // OpenAI accepts the original File object directly in Node.js
+      const processedFile = audioFile;
+      
+      // Override name and type if needed
+      Object.defineProperty(processedFile, 'name', { value: fileName, writable: false });
+      Object.defineProperty(processedFile, 'type', { value: mimeType, writable: false });
 
       console.log('✅ Sending to OpenAI Whisper:', {
         fileName: processedFile.name,

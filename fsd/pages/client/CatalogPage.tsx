@@ -117,7 +117,7 @@ export const CatalogPage = () => {
                         e.stopPropagation();
                         setExpandedCard(isExpanded ? null : material.id);
                       }}
-                      className="absolute bottom-3 right-3 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 hover:bg-white/30"
+                      className="absolute bottom-3 left-3 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 hover:bg-white/30 z-10"
                     >
                       <svg 
                         width="12" 
