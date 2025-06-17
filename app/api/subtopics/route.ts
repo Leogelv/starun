@@ -6,7 +6,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const includeCount = searchParams.get('include_count') === 'true';
     
-    let query = supabase
+    const query = supabase
       .from('subtopics')
       .select('*')
       .order('name', { ascending: true });

@@ -3,13 +3,14 @@ import { supabase } from '@/fsd/shared/clients/supabaseClient';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const { data, error } = await supabase
       .from('materials')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
     
     if (error) {
@@ -34,18 +35,20 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const body = await request.json();
-    const { id, created_at, ...updateData } = body; // Remove non-updatable fields
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: bodyId, created_at, ...updateData } = body; // Remove non-updatable fields
     
     const { data, error } = await supabase
       .from('materials')
-      .update(updateData)
-      .eq('id', params.id)
-      .select()
-      .single();
+              .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
     
     if (error) {
       if (error.code === 'PGRST116') {
@@ -69,13 +72,14 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const { error } = await supabase
       .from('materials')
-      .delete()
-      .eq('id', params.id);
+              .delete()
+        .eq('id', id);
     
     if (error) throw error;
     

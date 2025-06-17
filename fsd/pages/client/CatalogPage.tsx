@@ -193,15 +193,15 @@ export const CatalogPage = () => {
 
       {/* Scrollable content with optimized rendering */}
       <div className="relative z-10 min-h-screen pb-32 w-full">
-        {/* Fixed header with categories - full screen width from edge to edge */}
-        <div className="fixed top-0 left-0 right-0 z-20 bg-black/20 backdrop-blur-xl" style={{ paddingTop: 'max(95px, env(safe-area-inset-top))' }}>
+        {/* Fixed header with categories - FULL SCREEN WIDTH NO PADDINGS */}
+        <div className="fixed top-0 left-0 right-0 z-20 bg-black/20 backdrop-blur-xl pt-24">
           <div className="w-full px-4 pb-4">
             <h2 className="text-2xl font-bold text-white mb-4 text-glow font-poppins text-center">Материалы</h2>
           </div>
           
-          {/* Category pills - full viewport width, no margins, chips go to screen edge */}
-          <div className="w-full overflow-hidden">
-            <div className="flex gap-3 pb-4 overflow-x-auto scrollbar-hide pl-4" style={{ scrollSnapType: 'x mandatory' }}>
+          {/* Category pills - NO MARGINS, chips scroll to edge */}
+          <div className="w-full overflow-x-auto scrollbar-hide">
+            <div className="flex gap-3 pb-4 pl-4" style={{ scrollSnapType: 'x mandatory' }}>
               <button
                 onClick={() => setActiveSubtopic(undefined)}
                 className={`flex-shrink-0 px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
@@ -227,7 +227,7 @@ export const CatalogPage = () => {
                   {subtopic.name}
                 </button>
               ))}
-              {/* Добавляем невидимый элемент для скролла до самого края экрана */}
+              {/* Spacer for scrolling to edge */}
               <div className="flex-shrink-0 w-4"></div>
             </div>
           </div>

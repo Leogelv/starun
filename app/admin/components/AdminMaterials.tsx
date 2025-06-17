@@ -39,6 +39,7 @@ export const AdminMaterials = () => {
 
   useEffect(() => {
     filterAndSortMaterials();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [materials, selectedSubtopic, searchTerm, sortBy, sortOrder]);
 
   const fetchData = async () => {
@@ -180,7 +181,7 @@ export const AdminMaterials = () => {
             <div className="flex gap-2">
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSortBy(e.target.value as 'name' | 'date' | 'subtopic')}
                 className="px-3 py-2 rounded-xl border border-arctic-light/30 bg-transparent text-white focus:outline-none focus:border-electric-blue/50"
                 style={{ background: 'var(--smoky-cards)/10' }}
               >

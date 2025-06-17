@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AdminMaterials } from './components/AdminMaterials';
 import { AdminSubtopics } from './components/AdminSubtopics';
 

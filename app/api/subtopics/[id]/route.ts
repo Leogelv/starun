@@ -3,23 +3,23 @@ import { supabase } from '@/fsd/shared/clients/supabaseClient';
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const { data, error } = await supabase
       .from('subtopics')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .single();
     
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Subtopic not found' },
-          { status: 404 }
-        );
-      }
-      throw error;
+    if (error) throw error;
+    
+    if (!data) {
+      return NextResponse.json(
+        { error: 'Subtopic not found' },
+        { status: 404 }
+      );
     }
     
     return NextResponse.json(data);
@@ -34,18 +34,20 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const body = await request.json();
-    const { id, created_at, ...updateData } = body; // Remove non-updatable fields
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: bodyId, created_at, ...updateData } = body; // Remove non-updatable fields
     
     // Check for duplicate name
     const { data: existing, error: checkError } = await supabase
       .from('subtopics')
       .select('id')
       .eq('name', updateData.name)
-      .neq('id', params.id)
+      .neq('id', id)
       .single();
     
     if (checkError && checkError.code !== 'PGRST116') {
@@ -62,19 +64,11 @@ export async function PUT(
     const { data, error } = await supabase
       .from('subtopics')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
     
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return NextResponse.json(
-          { error: 'Subtopic not found' },
-          { status: 404 }
-        );
-      }
-      throw error;
-    }
+    if (error) throw error;
     
     return NextResponse.json(data);
   } catch (error) {
@@ -88,14 +82,15 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     // Check if subtopic has materials
     const { data: materials, error: checkError } = await supabase
       .from('materials')
       .select('id')
-      .eq('subtopic_id', params.id)
+      .eq('subtopic_id', id)
       .limit(1);
     
     if (checkError) throw checkError;
@@ -110,7 +105,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('subtopics')
       .delete()
-      .eq('id', params.id);
+      .eq('id', id);
     
     if (error) throw error;
     
