@@ -12,6 +12,10 @@ const openai = new OpenAI({
 export async function POST(request: NextRequest) {
   try {
     console.log('=== Speech API POST called ===');
+    console.log('🏗️ BUILD INFO: Node.js version:', process.version);
+    console.log('🏗️ BUILD INFO: File constructor available:', typeof File !== 'undefined');
+    console.log('🏗️ BUILD INFO: Current time:', new Date().toISOString());
+    console.log('🏗️ BUILD INFO: Environment:', process.env.NODE_ENV);
     
     const formData = await request.formData();
     console.log('FormData entries:', Array.from(formData.entries()).map(([key, value]) => ({
@@ -105,24 +109,27 @@ export async function POST(request: NextRequest) {
       console.log('💾 Writing temp file:', tempFilePath);
       fs.writeFileSync(tempFilePath, buffer);
       
-      // Create file stream for OpenAI
+      // Create file-like object for OpenAI SDK (minimal approach)
       const fileStream = fs.createReadStream(tempFilePath);
-      // Add required properties
-      (fileStream as unknown as { name: string }).name = fileName;
-      (fileStream as unknown as { type: string }).type = mimeType;
+      
+      // Add only the essential properties that OpenAI SDK needs
+      const fileObject = Object.assign(fileStream, {
+        name: fileName,
+        type: mimeType
+      });
 
       console.log('✅ Sending to OpenAI Whisper:', {
         fileName,
         type: mimeType,
         size: buffer.length,
         tempFilePath,
-        fileStreamName: (fileStream as unknown as { name: string }).name,
-        fileStreamType: (fileStream as unknown as { type: string }).type
+        fileObjectName: fileObject.name,
+        fileObjectType: fileObject.type
       });
       
       console.log('📤 Making request to OpenAI Whisper...');
       const transcription = await openai.audio.transcriptions.create({
-        file: fileStream as unknown as File,
+        file: fileObject as any, // Type assertion to bypass TypeScript checks
         model: 'whisper-1',
         language: 'ru',
         response_format: 'verbose_json',
