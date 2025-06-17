@@ -280,3 +280,53 @@ body::before {
   color: var(--purple-400);
   font-weight: 500;
 }
+
+/* Message send animation */
+@keyframes messageSlideOut {
+  0% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(20px) scale(0.95);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateX(100px) scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-message-send {
+  animation: messageSlideOut 0.6s ease-out forwards;
+}
+
+/* Haptic feedback visual */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 0.6s ease-out;
+}

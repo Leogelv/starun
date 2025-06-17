@@ -6,6 +6,7 @@ import { useTelegramUser } from "@/fsd/app/providers/TelegramUser";
 import { useMaterials } from '@/fsd/entities/meditation/hooks/useMaterials';
 import { MaterialCard } from '@/fsd/shared/components/MaterialCard';
 import { MarkdownMessage } from '@/fsd/shared/components/MarkdownMessage';
+import { GlassBottomBar } from '@/fsd/shared/components/GlassBottomBar';
 import * as THREE from 'three';
 import { createNoise3D } from 'simplex-noise';
 // @ts-ignore
@@ -553,11 +554,21 @@ export const ChatPage = () => {
 
   try {
     return (
-      <div className="fixed inset-0 bg-dark-bg overflow-hidden">
-        {/* Full screen cosmic sphere background */}
+      <div className="fixed inset-0 overflow-hidden">
+        {/* Background image with gradient overlay */}
+        <div 
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: 'url(/img/chatscreen.jpg)',
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-blue-800/60 to-blue-900/80"></div>
+        <div className="absolute inset-0 backdrop-blur-[0.5px]"></div>
+        
+        {/* Cosmic sphere background (reduced opacity) */}
         <div 
           ref={mountRef}
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 w-full h-full opacity-30"
           id="canvas_container"
         />
 
@@ -565,7 +576,7 @@ export const ChatPage = () => {
         <div className="relative z-10 h-full flex flex-col">
           {/* Top section with title */}
           <div className="flex-shrink-0 pb-4 text-center bg-gradient-to-b from-dark-bg/90 via-dark-bg/50 to-transparent" style={{ paddingTop: 'max(95px, env(safe-area-inset-top))' }}>
-            <h2 className="text-2xl font-bold text-white mb-2 text-glow" style={{ fontFamily: 'Inter Tight, sans-serif' }}>STARUNITY AI HELPER</h2>
+            <h2 className="text-2xl font-bold text-white mb-2 text-glow font-poppins">STARUNITY AI HELPER</h2>
           </div>
 
           {/* Messages */}
@@ -574,10 +585,10 @@ export const ChatPage = () => {
               {messages.map((msg, idx) => (
                 <div key={idx} className="space-y-3">
                   <div className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[80%] px-4 py-3 rounded-2xl backdrop-blur-md ${
+                    <div className={`max-w-[80%] px-4 py-3 rounded-2xl backdrop-blur-lg border ${
                       msg.role === 'user' 
-                        ? 'bg-gradient-accent border border-purple-400/30 text-white shadow-glow-sm' 
-                        : 'glass border border-purple-500/20 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-blue-400/40 text-white shadow-lg shadow-blue-500/20' 
+                        : 'bg-white/10 border-white/30 text-white shadow-lg shadow-white/20'
                     }`}>
                       <MarkdownMessage content={msg.content} className="text-sm" />
                     </div>
@@ -604,11 +615,11 @@ export const ChatPage = () => {
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-white/10 border border-white/20 backdrop-blur-md px-4 py-3 rounded-2xl shadow-lg">
+                  <div className="bg-white/10 border border-white/30 backdrop-blur-lg px-4 py-3 rounded-2xl shadow-lg shadow-white/20">
                     <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="w-2 h-2 bg-blue-300 rounded-full animate-bounce shadow-sm shadow-blue-300/50"></div>
+                      <div className="w-2 h-2 bg-purple-300 rounded-full animate-bounce shadow-sm shadow-purple-300/50" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-white rounded-full animate-bounce shadow-sm shadow-white/50" style={{ animationDelay: '0.2s' }}></div>
                     </div>
                   </div>
                 </div>
@@ -616,78 +627,16 @@ export const ChatPage = () => {
             </div>
           </div>
 
-          {/* Input area */}
-          <div className="fixed left-0 right-0 bg-dark-bg/95 backdrop-blur-xl border-t border-purple-500/20" style={{ bottom: '70px' }}>
-            <div className="px-4 py-4">
-              <div className="flex items-end gap-3 max-w-lg mx-auto">
-                <div className="flex-1 relative">
-                  <div className="relative glass border border-purple-500/30 rounded-3xl p-1 shadow-glow-sm">
-                    <textarea
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          handleSend();
-                        }
-                      }}
-                      placeholder="Напишите ваш запрос..."
-                      rows={1}
-                      className="w-full bg-transparent text-white px-5 py-3 pr-14 outline-none resize-none overflow-hidden placeholder-purple-300/50"
-                      style={{
-                        minHeight: '48px',
-                        maxHeight: '120px',
-                        height: 'auto'
-                      }}
-                      onInput={(e) => {
-                        const target = e.target as HTMLTextAreaElement;
-                        target.style.height = 'auto';
-                        target.style.height = Math.min(target.scrollHeight, 120) + 'px';
-                      }}
-                    />
-                    <button
-                      onClick={toggleRecording}
-                      className={`absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center transition-all ${
-                        isRecording 
-                          ? 'text-red-400 animate-pulse' 
-                          : 'text-purple-400/60 hover:text-purple-300'
-                      }`}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" className={`transition-all ${isRecording ? 'drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]' : 'drop-shadow-[0_0_6px_rgba(168,85,247,0.4)]'}`}>
-                        <path fill="currentColor" d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z"/>
-                        <path fill="currentColor" d="M17 11a1 1 0 0 1 2 0a7 7 0 1 1-14 0a1 1 0 0 1 2 0a5 5 0 1 0 10 0Z"/>
-                        <path fill="currentColor" d="M12 19a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Z"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                <button
-                  onClick={handleSend}
-                  disabled={!message.trim() || isLoading}
-                  className="relative w-14 h-14 bg-gradient-accent rounded-full flex items-center justify-center disabled:opacity-50 transition-all hover:scale-105 hover:shadow-glow disabled:hover:scale-100 group overflow-hidden"
-                >
-                  {/* Animated rocket icon */}
-                  <div className="relative z-10 transition-transform group-hover:-translate-y-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="animate-float">
-                      <path fill="white" d="M2.81 14.12L5.64 12.5C6.22 10.93 7 9.46 7.91 8.1L1.81 10.87L2.81 14.12M8.88 16.53L7.47 15.12L6.24 22H4.83L8.91 17.91C9.21 18.12 9.54 18.27 9.88 18.36L6.24 22M13.13 22.19L15.9 16.09C14.54 17 13.07 17.78 11.5 18.36L13.13 22.19M21.61 2.39C23.73 7.34 18.07 13 18.07 13C15.88 15.19 13.5 16.53 11.36 17.35C10.61 17.63 9.79 17.45 9.24 16.89L7.11 14.77C6.56 14.21 6.37 13.39 6.65 12.64C7.5 10.53 8.81 8.12 11 5.93C16.66.269 21.61 2.39 21.61 2.39Z"/>
-                      <circle cx="14.5" cy="9.5" r="1.3" fill="#a855f7" className="animate-pulse"/>
-                    </svg>
-                  </div>
-                  
-                  {/* Particle effects */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                    <div className="absolute bottom-2 left-3 w-1 h-1 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0s', animationDuration: '1.5s' }}></div>
-                    <div className="absolute bottom-3 left-5 w-0.5 h-0.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s', animationDuration: '1.8s' }}></div>
-                    <div className="absolute bottom-1 left-7 w-1.5 h-1.5 bg-purple-300 rounded-full animate-bounce" style={{ animationDelay: '0.4s', animationDuration: '1.2s' }}></div>
-                    <div className="absolute bottom-4 left-2 w-1 h-1 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '0.6s', animationDuration: '1.6s' }}></div>
-                  </div>
-                  
-                  {/* Continuous glow animation */}
-                  <div className="absolute inset-0 bg-gradient-accent rounded-full animate-pulse opacity-30"></div>
-                </button>
-              </div>
-            </div>
-          </div>
+        {/* Glass Bottom Bar */}
+        <GlassBottomBar
+          onMicrophoneClick={toggleRecording}
+          isRecording={isRecording}
+          showTextInput={true}
+          message={message}
+          onMessageChange={setMessage}
+          onSendMessage={handleSend}
+          isLoading={isLoading}
+        />
         </div>
       </div>
     );
