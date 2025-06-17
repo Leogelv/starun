@@ -8,8 +8,7 @@ const nextConfig: NextConfig = {
                 hostname: 'xelene.me',
             }
         ]
-    },
-    serverExternalPackages: ['openai']
+    }
 };
 
 export default nextConfig;

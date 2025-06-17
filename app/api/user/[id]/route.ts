@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import {supabase} from "@/fsd/shared/clients/supabaseClient";
-import { UpdateData } from '@/types/openai';
+import { UpdateData } from '@/types/common';
 
 export async function GET(
     request: Request,
