@@ -110,7 +110,7 @@ export const GlassBottomBar: React.FC<GlassBottomBarProps> = ({
             onClick={pathname === '/' ? onMicrophoneClick : () => handleNavigation('/')}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-lg`}
+            className={`relative w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-lg`}
             style={{
               background: isRecording 
                 ? 'rgba(239, 68, 68, 0.3)' 
@@ -164,8 +164,8 @@ export const GlassBottomBar: React.FC<GlassBottomBarProps> = ({
             {pathname === '/' ? (
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
-                width="24" 
-                height="24" 
+                width="48" 
+                height="48" 
                 viewBox="0 0 24 24" 
                 className={`relative z-10 transition-all ${isRecording ? 'text-white animate-pulse' : 'text-white'}`}
                 style={{
