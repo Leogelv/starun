@@ -22,7 +22,7 @@ async function testSpeechAPIWithRealFile() {
     
     console.log('Sending request to speech API...');
     
-    const response = await fetch('http://192.168.2.60:3000/api/speech', {
+    const response = await fetch('https://starun-production.up.railway.app/api/speech', {
       method: 'POST',
       body: formData,
     });

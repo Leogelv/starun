@@ -612,8 +612,8 @@ export const ChatPage = () => {
         </div>
 
         {/* Input area */}
-        <div className="fixed left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent" style={{ bottom: '70px' }}>
-          <div className="bg-white/5 backdrop-blur-3xl border-t border-white/10 p-4">
+        <div className="fixed left-0 right-0" style={{ bottom: '70px' }}>
+          <div className="bg-black/30 backdrop-blur-3xl p-4">
             <div className="flex items-center gap-3 max-w-lg mx-auto">
           <div className="flex-1 relative">
             <input
