@@ -193,46 +193,48 @@ export const CatalogPage = () => {
 
       {/* Scrollable content with optimized rendering */}
       <div className="relative z-10 min-h-screen pb-32 w-full">
-        {/* Fixed header with categories - full screen width */}
+        {/* Fixed header with categories - full screen width from edge to edge */}
         <div className="fixed top-0 left-0 right-0 z-20 bg-black/20 backdrop-blur-xl" style={{ paddingTop: 'max(95px, env(safe-area-inset-top))' }}>
           <div className="w-full px-4 pb-4">
             <h2 className="text-2xl font-bold text-white mb-4 text-glow font-poppins text-center">Материалы</h2>
-            
-            {/* Category pills - full viewport width */}
-            <div className="w-screen -mx-4 px-4">
-              <div className="flex gap-3 pb-2 overflow-x-auto scrollbar-hide px-2" style={{ scrollSnapType: 'x mandatory' }}>
+          </div>
+          
+          {/* Category pills - full viewport width, no margins, chips go to screen edge */}
+          <div className="w-full overflow-hidden">
+            <div className="flex gap-3 pb-4 overflow-x-auto scrollbar-hide pl-4" style={{ scrollSnapType: 'x mandatory' }}>
+              <button
+                onClick={() => setActiveSubtopic(undefined)}
+                className={`flex-shrink-0 px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                  !activeSubtopic 
+                    ? 'bg-gradient-sky text-white shadow-lg shadow-blue-500/40 scale-105' 
+                    : 'bg-white/10 backdrop-blur-lg text-white/80 hover:text-white hover:scale-105'
+                }`}
+                style={{ scrollSnapAlign: 'start' }}
+              >
+                Все
+              </button>
+              {subtopics?.map((subtopic) => (
                 <button
-                  onClick={() => setActiveSubtopic(undefined)}
+                  key={subtopic.id}
+                  onClick={() => setActiveSubtopic(subtopic.id)}
                   className={`flex-shrink-0 px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                    !activeSubtopic 
+                    activeSubtopic === subtopic.id
                       ? 'bg-gradient-sky text-white shadow-lg shadow-blue-500/40 scale-105' 
                       : 'bg-white/10 backdrop-blur-lg text-white/80 hover:text-white hover:scale-105'
                   }`}
                   style={{ scrollSnapAlign: 'start' }}
                 >
-                  Все
+                  {subtopic.name}
                 </button>
-                {subtopics?.map((subtopic) => (
-                  <button
-                    key={subtopic.id}
-                    onClick={() => setActiveSubtopic(subtopic.id)}
-                    className={`flex-shrink-0 px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                      activeSubtopic === subtopic.id
-                        ? 'bg-gradient-sky text-white shadow-lg shadow-blue-500/40 scale-105' 
-                        : 'bg-white/10 backdrop-blur-lg text-white/80 hover:text-white hover:scale-105'
-                    }`}
-                    style={{ scrollSnapAlign: 'start' }}
-                  >
-                    {subtopic.name}
-                  </button>
-                ))}
-              </div>
+              ))}
+              {/* Добавляем невидимый элемент для скролла до самого края экрана */}
+              <div className="flex-shrink-0 w-4"></div>
             </div>
           </div>
         </div>
 
         {/* Materials grid - full width optimized with top margin for fixed header */}
-        <div className="w-full px-4 pt-40">
+        <div className="w-full px-4 pt-44">
           {materialsLoading ? (
             <div className="flex justify-center py-12">
               <div className="w-12 h-12 rounded-full border-2 border-blue-500 border-t-transparent animate-spin shadow-glow"></div>
