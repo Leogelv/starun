@@ -251,3 +251,32 @@ body::before {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Markdown content styles */
+.markdown-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.markdown-content > *:first-child {
+  margin-top: 0;
+}
+
+.markdown-content > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Counter for ordered lists */
+.counter-reset-list {
+  counter-reset: list-counter;
+}
+
+.counter-reset-list li {
+  counter-increment: list-counter;
+}
+
+.counter-reset-list li::before {
+  content: counter(list-counter) ".";
+  color: var(--purple-400);
+  font-weight: 500;
+}

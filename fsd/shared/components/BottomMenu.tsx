@@ -64,7 +64,7 @@ export const BottomMenu = () => {
                     }}
                 />
                 
-                <div className='grid grid-cols-3 relative'>
+                <div className='grid grid-cols-3 relative items-center'>
                     {menu.map((item, index) => {
                         const isActive = pathname === item.link;
                         
@@ -73,7 +73,9 @@ export const BottomMenu = () => {
                                 onClick={() => hapticFeedback.impactOccurred('light')} 
                                 key={item.link} 
                                 href={item.link}
-                                className="relative flex flex-col items-center justify-center py-3 group"
+                                className={`relative flex flex-col items-center justify-center group ${
+                                    index === 0 ? 'py-2' : 'py-3'
+                                }`}
                             >
                                 {/* Active background */}
                                 <AnimatePresence>
@@ -88,7 +90,7 @@ export const BottomMenu = () => {
                                                 damping: 30,
                                             }}
                                         >
-                                            <div className="w-14 h-14 bg-purple-500/20 rounded-2xl blur-xl" />
+                                            <div className={`${index === 0 ? 'w-16 h-16' : 'w-14 h-14'} bg-purple-500/20 rounded-2xl blur-xl`} />
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
@@ -97,7 +99,7 @@ export const BottomMenu = () => {
                                 <motion.div
                                     className="relative mb-1"
                                     animate={{
-                                        scale: isActive ? 1.1 : 1,
+                                        scale: isActive ? (index === 0 ? 1.2 : 1.1) : (index === 0 ? 1.15 : 1),
                                         y: isActive ? -2 : 0,
                                     }}
                                     whileHover={{ scale: 1.05 }}
@@ -111,7 +113,7 @@ export const BottomMenu = () => {
                                     {/* Icon container */}
                                     <div className={`relative transition-colors duration-300 ${
                                         isActive ? 'text-purple-300' : 'text-purple-200/40 group-hover:text-purple-200/60'
-                                    }`}>
+                                    } ${index === 0 ? 'transform scale-125' : ''}`}>
                                         {item.icon}
                                         
                                         {/* Active glow */}
