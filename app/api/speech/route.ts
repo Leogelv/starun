@@ -49,22 +49,53 @@ export async function POST(request: NextRequest) {
         file: processedFile,
         model: 'whisper-1',
         language: 'ru',
-        response_format: 'text',
+        response_format: 'verbose_json',
         temperature: 0.0,
+        prompt: 'Это запрос о медитации, йоге, практиках осознанности или здоровье.',
       });
 
       console.log('Transcription successful:', transcription);
 
-      if (!transcription || transcription.trim() === '') {
+      const transcribedText = transcription.text || '';
+      const confidence = transcription.segments?.[0]?.avg_logprob || -1;
+      
+      console.log('Transcription confidence:', confidence);
+      
+      if (!transcribedText || transcribedText.trim() === '') {
         return NextResponse.json({ 
           text: 'Речь не распознана. Попробуйте говорить громче и четче.',
           success: false
         });
       }
+      
+      // Check for common hallucinations
+      const commonHallucinations = [
+        'спасибо за просмотр',
+        'спасибо за внимание',
+        'подписывайтесь на канал',
+        'like and subscribe',
+        'музыка',
+        'субтитры',
+        'переводчик',
+        'Thank you'
+      ];
+      
+      const isLikelyHallucination = commonHallucinations.some(phrase => 
+        transcribedText.toLowerCase().includes(phrase.toLowerCase())
+      );
+      
+      if (isLikelyHallucination || confidence < -0.8) {
+        return NextResponse.json({ 
+          text: 'Не удалось четко распознать речь. Попробуйте сказать еще раз более четко.',
+          success: false,
+          debug: { confidence, text: transcribedText }
+        });
+      }
 
       return NextResponse.json({ 
-        text: transcription.trim(),
-        success: true 
+        text: transcribedText.trim(),
+        success: true,
+        confidence 
       });
 
     } catch (openaiError: any) {
