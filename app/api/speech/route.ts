@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
       
       console.log('📤 Making request to OpenAI Whisper...');
       const transcription = await openai.audio.transcriptions.create({
-        file: fileObject as any, // Type assertion to bypass TypeScript checks
+        file: fileObject as unknown as File, // Type assertion for Node.js ReadStream
         model: 'whisper-1',
         language: 'ru',
         response_format: 'verbose_json',
