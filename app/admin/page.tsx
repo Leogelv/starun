@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { AdminMaterials } from './components/AdminMaterials';
 import { AdminSubtopics } from './components/AdminSubtopics';
+import { AdminChatHistory } from './components/AdminChatHistory';
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState<'materials' | 'subtopics'>('materials');
+  const [activeTab, setActiveTab] = useState<'materials' | 'subtopics' | 'chats'>('materials');
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--night-sky-base)' }}>
@@ -47,6 +48,20 @@ export default function AdminPage() {
               >
                 Категории
               </button>
+              <button
+                onClick={() => setActiveTab('chats')}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  activeTab === 'chats'
+                    ? 'text-white shadow-lg'
+                    : 'text-white/70 hover:text-white hover:scale-105'
+                }`}
+                style={{
+                  background: activeTab === 'chats' ? 'var(--gradient-accent)' : 'var(--smoky-cards)/20',
+                  boxShadow: activeTab === 'chats' ? '0 0 20px var(--electric-blue)/40' : 'none'
+                }}
+              >
+                История чатов
+              </button>
             </div>
           </div>
         </div>
@@ -56,6 +71,7 @@ export default function AdminPage() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {activeTab === 'materials' && <AdminMaterials />}
         {activeTab === 'subtopics' && <AdminSubtopics />}
+        {activeTab === 'chats' && <AdminChatHistory />}
       </div>
     </div>
   );

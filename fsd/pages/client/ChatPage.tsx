@@ -16,6 +16,7 @@ export const ChatPage = () => {
   
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [sessionId] = useState<string>(crypto.randomUUID());
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string, materialIds?: number[] }[]>([
     {
       role: 'assistant',
@@ -32,6 +33,11 @@ export const ChatPage = () => {
   console.log('ChatPage - Component rendered');
   console.log('ChatPage - Messages:', messages);
   console.log('ChatPage - Current message:', message);
+
+  // Log session creation
+  useEffect(() => {
+    console.log('New chat session created:', sessionId);
+  }, [sessionId]);
 
   // Initialize MediaRecorder for audio recording
   useEffect(() => {
@@ -52,7 +58,7 @@ export const ChatPage = () => {
     setMessage('');
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
-    console.log('Sending message to API:', userMessage);
+    console.log('Sending message to API:', { userMessage, sessionId });
 
     try {
       const response = await fetch('/api/chat', {
@@ -63,6 +69,7 @@ export const ChatPage = () => {
         body: JSON.stringify({
           telegram_id: user?.telegram_id || telegramUser?.id,
           question: userMessage,
+          session_id: sessionId,
         }),
       });
 
@@ -112,14 +119,14 @@ export const ChatPage = () => {
       } else {
         setMessages(prev => [...prev, { 
           role: 'assistant', 
-          content: 'Не удалось найти подходящие практики по вашему запросу. Попробуйте просмотреть каталог или спросить что-то другое.' 
+          content: 'Не удалось найти подходящие практики по вашему запросу. Попробуйте просмотреть каталог или спросить что-то другое.'
         }]);
       }
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: `Извините, произошла ошибка. Пожалуйста, попробуйте еще раз.` 
+        content: `Извините, произошла ошибка. Пожалуйста, попробуйте еще раз.`
       }]);
     } finally {
       setIsLoading(false);

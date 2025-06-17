@@ -6,6 +6,7 @@ import { useSubtopics } from '@/fsd/entities/meditation/hooks/useSubtopics';
 import { openLink } from '@telegram-apps/sdk-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { GlassBottomBar } from '@/fsd/shared/components/GlassBottomBar';
+import { CategoryFilter } from '@/fsd/shared/components/CategoryFilter';
 
 // Optimized material card component
 const MaterialCard = memo(({ 
@@ -193,45 +194,12 @@ export const CatalogPage = () => {
 
       {/* Scrollable content with optimized rendering */}
       <div className="relative z-10 min-h-screen pb-32 w-full">
-        {/* Fixed header with categories - FULL SCREEN WIDTH NO PADDINGS */}
-        <div className="fixed top-0 left-0 right-0 z-20 bg-black/20 backdrop-blur-xl pt-24">
-          <div className="w-full px-4 pb-4">
-            <h2 className="text-2xl font-bold text-white mb-4 text-glow font-poppins text-center">Материалы</h2>
-          </div>
-          
-          {/* Category pills - NO MARGINS, chips scroll to edge */}
-          <div className="w-full overflow-x-auto scrollbar-hide">
-            <div className="flex gap-3 pb-4 pl-4" style={{ scrollSnapType: 'x mandatory' }}>
-              <button
-                onClick={() => setActiveSubtopic(undefined)}
-                className={`flex-shrink-0 px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                  !activeSubtopic 
-                    ? 'bg-gradient-sky text-white shadow-lg shadow-blue-500/40 scale-105' 
-                    : 'bg-white/10 backdrop-blur-lg text-white/80 hover:text-white hover:scale-105'
-                }`}
-                style={{ scrollSnapAlign: 'start' }}
-              >
-                Все
-              </button>
-              {subtopics?.map((subtopic) => (
-                <button
-                  key={subtopic.id}
-                  onClick={() => setActiveSubtopic(subtopic.id)}
-                  className={`flex-shrink-0 px-6 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                    activeSubtopic === subtopic.id
-                      ? 'bg-gradient-sky text-white shadow-lg shadow-blue-500/40 scale-105' 
-                      : 'bg-white/10 backdrop-blur-lg text-white/80 hover:text-white hover:scale-105'
-                  }`}
-                  style={{ scrollSnapAlign: 'start' }}
-                >
-                  {subtopic.name}
-                </button>
-              ))}
-              {/* Spacer for scrolling to edge */}
-              <div className="flex-shrink-0 w-4"></div>
-            </div>
-          </div>
-        </div>
+        {/* Category Filter Component */}
+        <CategoryFilter 
+          subtopics={subtopics || []}
+          activeSubtopic={activeSubtopic}
+          onSubtopicChange={setActiveSubtopic}
+        />
 
         {/* Materials grid - full width optimized with top margin for fixed header */}
         <div className="w-full px-4 pt-44">
