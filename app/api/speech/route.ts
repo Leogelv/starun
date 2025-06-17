@@ -94,19 +94,21 @@ export async function POST(request: NextRequest) {
       // Convert File to buffer - OpenAI SDK handles the rest
       const buffer = Buffer.from(await audioFile.arrayBuffer());
       
-      // Create a blob-like object that OpenAI SDK expects
-      const fileBlob = new Blob([buffer], { type: mimeType });
-      Object.defineProperty(fileBlob, 'name', { value: fileName });
+      // Create a proper File object that OpenAI SDK expects
+      const fileObject = new File([buffer], fileName, { type: mimeType });
 
       console.log('✅ Sending to OpenAI Whisper:', {
         fileName,
         type: mimeType,
-        size: buffer.length
+        size: buffer.length,
+        fileObjectName: fileObject.name,
+        fileObjectSize: fileObject.size,
+        fileObjectType: fileObject.type
       });
       
       console.log('📤 Making request to OpenAI Whisper...');
       const transcription = await openai.audio.transcriptions.create({
-        file: fileBlob as File,
+        file: fileObject,
         model: 'whisper-1',
         language: 'ru',
         response_format: 'verbose_json',

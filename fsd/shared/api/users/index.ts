@@ -14,6 +14,26 @@ export const fetchTgUser = async (telegramId?: number) => {
 };
 
 export const upsertTgUser = async (payload: UpsertUserPayload) => {
-    const response = await api.post(`/api/user`, payload);
-    return response.data
+    console.log('📤 API call: POST /api/user with payload:', payload);
+    
+    if (!payload.telegram_id || payload.telegram_id <= 0) {
+        console.error('❌ Invalid telegram_id:', payload.telegram_id);
+        throw new Error('Invalid telegram_id provided');
+    }
+    
+    try {
+        const response = await api.post(`/api/user`, payload);
+        console.log('✅ API response:', response.status, response.data);
+        return response.data;
+    } catch (error: any) {
+        console.error('❌ API error details:', {
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data,
+            message: error.message,
+            url: error.config?.url,
+            method: error.config?.method
+        });
+        throw error;
+    }
 }

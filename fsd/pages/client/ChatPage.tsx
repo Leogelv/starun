@@ -487,10 +487,26 @@ export const ChatPage = () => {
       console.log('FormData prepared:', {
         filename,
         blobSize: audioBlob.size,
-        blobType: audioBlob.type
+        blobType: audioBlob.type,
+        formDataKeys: Array.from(formData.keys()),
+        formDataEntries: Array.from(formData.entries()).map(([key, value]) => ({
+          key,
+          valueType: typeof value,
+          isFile: value instanceof File,
+          isBlob: value instanceof Blob,
+          ...(value instanceof File && { name: value.name, size: value.size, type: value.type }),
+          ...(value instanceof Blob && !value.name && { size: value.size, type: value.type })
+        }))
       });
       
       console.log('Sending request to /api/speech...');
+      console.log('Request details:', {
+        method: 'POST',
+        hasFormData: !!formData,
+        contentType: 'multipart/form-data (automatic)',
+        url: '/api/speech'
+      });
+      
       const response = await fetch('/api/speech', {
         method: 'POST',
         body: formData,
