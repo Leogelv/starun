@@ -13,6 +13,18 @@ export const BottomMenu = () => {
             link: '/',
             icon: (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.8214 2.48697 15.5291 3.33782 17.0002L2 22L7 20.662C8.46997 21.513 10.1786 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="8" cy="12" r="1" fill="currentColor"/>
+                    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                    <circle cx="16" cy="12" r="1" fill="currentColor"/>
+                </svg>
+            ),
+            text: 'Чат'
+        },
+        {
+            link: '/catalog',
+            icon: (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                     <rect x="3" y="3" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="2"/>
                     <rect x="14" y="3" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="2"/>
                     <rect x="3" y="14" width="7" height="7" rx="2" stroke="currentColor" strokeWidth="2"/>
@@ -20,18 +32,6 @@ export const BottomMenu = () => {
                 </svg>
             ),
             text: 'Материалы'
-        },
-        {
-            link: '/chat',
-            icon: (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.8214 2.48697 15.5291 3.33782 17.0002L2 22L7 20.662C8.46997 21.513 10.1786 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <circle cx="8" cy="12" r="1" fill="currentColor"/>
-                    <circle cx="12" cy="12" r="1" fill="currentColor"/>
-                    <circle cx="16" cy="12" r="1" fill="currentColor"/>
-                </svg>
-            ),
-            text: 'AI помощник'
         },
         {
             link: '/profile',
@@ -50,10 +50,10 @@ export const BottomMenu = () => {
             {/* Glass morphism background */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
             
-            <div className='relative bg-white/5 backdrop-blur-3xl border-t border-white/10'>
+            <div className='relative glass-dark border-t border-purple-500/20'>
                 {/* Animated glow line */}
                 <motion.div 
-                    className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                    className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-purple-500/60 to-transparent"
                     animate={{
                         x: ['-100%', '100%'],
                     }}
@@ -88,7 +88,7 @@ export const BottomMenu = () => {
                                                 damping: 30,
                                             }}
                                         >
-                                            <div className="w-14 h-14 bg-white/10 rounded-2xl blur-xl" />
+                                            <div className="w-14 h-14 bg-purple-500/20 rounded-2xl blur-xl" />
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
@@ -110,7 +110,7 @@ export const BottomMenu = () => {
                                 >
                                     {/* Icon container */}
                                     <div className={`relative transition-colors duration-300 ${
-                                        isActive ? 'text-white' : 'text-white/40 group-hover:text-white/60'
+                                        isActive ? 'text-purple-300' : 'text-purple-200/40 group-hover:text-purple-200/60'
                                     }`}>
                                         {item.icon}
                                         
@@ -122,7 +122,7 @@ export const BottomMenu = () => {
                                                 animate={{ opacity: 1, scale: 1.2 }}
                                                 exit={{ opacity: 0, scale: 0.8 }}
                                             >
-                                                <div className="w-full h-full bg-white/30 blur-md rounded-full" />
+                                                <div className="w-full h-full bg-purple-400/40 blur-md rounded-full" />
                                             </motion.div>
                                         )}
                                     </div>
@@ -141,7 +141,7 @@ export const BottomMenu = () => {
                                                     damping: 25
                                                 }}
                                             >
-                                                <div className="w-1 h-1 bg-white rounded-full" />
+                                                <div className="w-1 h-1 bg-purple-400 rounded-full" />
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
@@ -150,7 +150,7 @@ export const BottomMenu = () => {
                                 {/* Text label */}
                                 <motion.p 
                                     className={`text-[10px] font-medium tracking-wider uppercase transition-all duration-300 ${
-                                        isActive ? 'text-white/90' : 'text-white/30 group-hover:text-white/50'
+                                        isActive ? 'text-purple-200' : 'text-purple-200/30 group-hover:text-purple-200/50'
                                     }`}
                                     animate={{
                                         opacity: isActive ? 1 : 0.5,

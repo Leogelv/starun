@@ -1,10 +1,10 @@
 import {ClientPage} from "@/fsd/app/providers/ClientPage";
-import {ChatPage} from "@/fsd/pages/client/ChatPage";
+import {CatalogPage} from "@/fsd/pages/client/CatalogPage";
 
 export default function Page(){
     return(
         <ClientPage>
-            <ChatPage/>
+            <CatalogPage/>
         </ClientPage>
     )
 }

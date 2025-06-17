@@ -14,22 +14,35 @@ export default function AntdWrapper({children}: { children: React.ReactNode }) {
                 locale={locale}
                 theme={{
                     token: {
-                        // colorSplit: '#D1F0D1',
-                        colorPrimary: '#8e44ad',
-                        // colorLink: '#0A5900',
-                        //borderRadius: 4,
+                        colorPrimary: '#9333ea',
+                        colorLink: '#a855f7',
+                        colorLinkHover: '#c084fc',
+                        colorLinkActive: '#7c2d8a',
                         fontFamily: `inherit`,
                         controlHeight: 42,
-                        colorTextPlaceholder: '#515151',
-                        // colorError: '#FF6463',
-                        // controlHeightXS: 24,
-                        // controlHeightSM: 30,
-                        // controlHeight: 42,
-                        // colorBgSpotlight: '#17A700',
-                        // colorInfo: '#17A700',
-                        // colorInfoBg: '#D1F0D1'
-                        colorBgElevated: "#111",
-                        colorTextDescription: "#fff"
+                        colorTextPlaceholder: 'rgba(233, 213, 255, 0.5)',
+                        colorBgElevated: "#110e1f",
+                        colorTextDescription: "#e9d5ff",
+                        colorText: "#ffffff",
+                        colorTextSecondary: "#e9d5ff",
+                        colorTextTertiary: "#d8b4fe",
+                        colorTextQuaternary: "#c084fc",
+                        colorBorder: "rgba(139, 92, 246, 0.2)",
+                        colorBorderSecondary: "rgba(139, 92, 246, 0.1)",
+                        colorFill: "rgba(139, 92, 246, 0.1)",
+                        colorFillSecondary: "rgba(139, 92, 246, 0.08)",
+                        colorFillTertiary: "rgba(139, 92, 246, 0.05)",
+                        colorFillQuaternary: "rgba(139, 92, 246, 0.02)",
+                        colorBgContainer: "#1a1630",
+                        colorBgLayout: "#0A0818",
+                        colorBgMask: "rgba(10, 8, 24, 0.8)",
+                        colorSuccess: "#52c41a",
+                        colorWarning: "#faad14",
+                        colorError: "#ff4d4f",
+                        colorInfo: "#9333ea",
+                        borderRadius: 12,
+                        boxShadow: "0 2px 8px rgba(147, 51, 234, 0.15)",
+                        boxShadowSecondary: "0 4px 16px rgba(147, 51, 234, 0.1)"
                     },
                     components: {
                         Message: {
@@ -43,11 +56,13 @@ export default function AntdWrapper({children}: { children: React.ReactNode }) {
                             paddingContentVertical: 8,
                             paddingContentHorizontal: 24,
                             fontWeight: 600,
-                            defaultBg: "#1a1a1a",
+                            defaultBg: "rgba(139, 92, 246, 0.1)",
                             defaultColor: "#fff",
-                            defaultBorderColor: "#2a2a2a",
-                            defaultHoverBg: "transparent",
-                            defaultActiveBg: "#2a2a2a",
+                            defaultBorderColor: "rgba(139, 92, 246, 0.3)",
+                            defaultHoverBg: "rgba(139, 92, 246, 0.2)",
+                            defaultActiveBg: "rgba(139, 92, 246, 0.3)",
+                            primaryColor: "#fff",
+                            primaryShadow: "0 0 20px rgba(147, 51, 234, 0.4)",
                             //colorTextPlaceholder: '#999999',
                             //colorText: '#0A5900'
                             /*
@@ -68,22 +83,25 @@ export default function AntdWrapper({children}: { children: React.ReactNode }) {
                             colorTextDescription: "#a5a5a5"
                         },
                         Tabs: {
-                            colorBorderSecondary: "#2a2a2a",
-                            itemColor: "#fff",
+                            colorBorderSecondary: "rgba(139, 92, 246, 0.2)",
+                            itemColor: "#e9d5ff",
+                            itemSelectedColor: "#fff",
+                            itemHoverColor: "#fff",
+                            inkBarColor: "#9333ea",
                         },
                         Progress: {
-                            defaultColor: "#8e44ad",
-                            remainingColor: "#2a2a2a",
+                            defaultColor: "#9333ea",
+                            remainingColor: "rgba(139, 92, 246, 0.1)",
                         },
                         Select: {
                             colorText: "#fff",
-                            selectorBg: "#1a1a1a",
-                            colorBorder: "#2a2a2a",
-                            multipleItemBg: "#2a2a2a",
-                            colorIcon: "#fff",
-                            colorIconHover: "#eee",
-                            colorBgContainer: "#1a1a1a",
-                            optionSelectedBg: "#2a2a2a",
+                            selectorBg: "rgba(139, 92, 246, 0.1)",
+                            colorBorder: "rgba(139, 92, 246, 0.3)",
+                            multipleItemBg: "rgba(139, 92, 246, 0.2)",
+                            colorIcon: "#e9d5ff",
+                            colorIconHover: "#fff",
+                            colorBgContainer: "#1a1630",
+                            optionSelectedBg: "rgba(139, 92, 246, 0.3)",
 
 
 
@@ -117,25 +135,33 @@ export default function AntdWrapper({children}: { children: React.ReactNode }) {
                         //     colorBorder: '#686868',
                         // }
                         Modal: {
-                            contentBg: '#111111',
-                            headerBg: '#111111',
+                            contentBg: '#110e1f',
+                            headerBg: '#110e1f',
                             titleColor: "#fff",
-                            colorIcon: "#fff",
-                            colorIconHover: "#515151"
+                            colorIcon: "#e9d5ff",
+                            colorIconHover: "#fff",
+                            footerBg: 'transparent',
+                            colorSplit: 'rgba(139, 92, 246, 0.2)'
                         },
                         Form: {
-                            labelColor: "#fff"
+                            labelColor: "#e9d5ff",
+                            labelFontSize: 14,
+                            labelHeight: 28,
+                            itemMarginBottom: 24
                         },
                         Input: {
                             colorText: "#fff",
-                            colorBgContainer: "#1a1a1a",
-                            colorBorder: "#2a2a2a"
+                            colorBgContainer: "rgba(139, 92, 246, 0.1)",
+                            colorBorder: "rgba(139, 92, 246, 0.3)",
+                            activeBorderColor: "#9333ea",
+                            hoverBorderColor: "#a855f7",
+                            activeShadow: "0 0 0 2px rgba(147, 51, 234, 0.2)"
                         }
                     },
 
                 }}
             >
-                <NextTopLoader color={'#8e44ad'}/>
+                <NextTopLoader color={'#9333ea'}/>
                 <App>
                     {children}
                 </App>

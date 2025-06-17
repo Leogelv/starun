@@ -4,6 +4,30 @@
 :root {
   --background: #0A0A0F;
   --foreground: #FFFFFF;
+  
+  /* Purple theme colors */
+  --purple-50: #faf5ff;
+  --purple-100: #f3e8ff;
+  --purple-200: #e9d5ff;
+  --purple-300: #d8b4fe;
+  --purple-400: #c084fc;
+  --purple-500: #a855f7;
+  --purple-600: #9333ea;
+  --purple-700: #7c2d8a;
+  --purple-800: #6b21a8;
+  --purple-900: #581c87;
+  --purple-950: #3b0764;
+  
+  /* Dark backgrounds */
+  --dark-bg: #0A0818;
+  --dark-surface: #110e1f;
+  --dark-surface-light: #1a1630;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #9333ea 0%, #6b21a8 100%);
+  --gradient-accent: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  --gradient-dark: linear-gradient(180deg, #0A0818 0%, #1a1630 100%);
+  --gradient-glow: radial-gradient(ellipse at top, #3b0764 0%, transparent 50%);
 }
 
 @theme inline {
@@ -14,12 +38,26 @@
 }
 
 body {
-  background: #0A0A0F;
+  background: var(--dark-bg);
   color: var(--foreground);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   letter-spacing: -0.01em;
   min-height: 100vh;
   overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-glow);
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Telegram safe areas */
@@ -31,23 +69,75 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* Purple theme utilities */
+.bg-gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.bg-gradient-accent {
+  background: var(--gradient-accent);
+}
+
+.bg-gradient-dark {
+  background: var(--gradient-dark);
+}
+
+.bg-dark-surface {
+  background: var(--dark-surface);
+}
+
+.bg-dark-surface-light {
+  background: var(--dark-surface-light);
+}
+
+/* Glassmorphism effect */
+.glass {
+  background: rgba(139, 92, 246, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.glass-dark {
+  background: rgba(17, 14, 31, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+/* Glow effects */
+.glow-purple {
+  box-shadow: 0 0 40px rgba(147, 51, 234, 0.3);
+}
+
+.glow-purple-sm {
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+}
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(147, 51, 234, 0.5);
+}
+
 /* Catalog styles */
 .meditation-tabs .ant-tabs-nav {
   margin-bottom: 0;
 }
 
 .meditation-tabs .ant-tabs-tab {
-  background: white;
+  background: rgba(139, 92, 246, 0.1);
+  backdrop-filter: blur(8px);
   border-radius: 20px;
   padding: 8px 16px;
   margin-right: 8px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(139, 92, 246, 0.2);
   transition: all 0.2s;
+  color: #e9d5ff;
 }
 
 .meditation-tabs .ant-tabs-tab-active {
-  background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+  background: var(--gradient-accent);
   border-color: transparent;
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.4);
 }
 
 .meditation-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
@@ -67,6 +157,54 @@ body {
   transform: translateY(-4px);
 }
 
+/* Button styles */
+.btn-gradient {
+  background: var(--gradient-accent);
+  color: white;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.btn-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s;
+}
+
+.btn-gradient:hover::before {
+  left: 100%;
+}
+
+.btn-gradient:hover {
+  box-shadow: 0 0 30px rgba(147, 51, 234, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Input styles */
+.input-purple {
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  color: white;
+  transition: all 0.3s;
+}
+
+.input-purple:focus {
+  border-color: var(--purple-500);
+  box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
+  outline: none;
+}
+
+.input-purple::placeholder {
+  color: rgba(233, 213, 255, 0.5);
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -74,7 +212,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--dark-surface);
 }
 
 ::-webkit-scrollbar-thumb {

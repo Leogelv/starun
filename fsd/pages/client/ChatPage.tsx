@@ -18,7 +18,12 @@ export const ChatPage = () => {
   
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
-  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string, materialIds?: number[] }[]>([]);
+  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string, materialIds?: number[] }[]>([
+    {
+      role: 'assistant',
+      content: 'Какой запрос сегодня? Что реально на душе сейчас? ✨'
+    }
+  ]);
   const [isLoading, setIsLoading] = useState(false);
   const mountRef = useRef<HTMLDivElement>(null);
   const { data: allMaterials } = useMaterials();
@@ -329,13 +334,13 @@ export const ChatPage = () => {
       console.log('Extracted material IDs:', materialIds);
       console.log('Assistant comment:', assistantComment);
       
-      if (materialIds.length > 0) {
+      if (materialIds.length > 0 || assistantComment) {
         const displayComment = assistantComment || `Я нашел ${materialIds.length} ${materialIds.length === 1 ? 'практику' : 'практики'} для вас:`;
         
         setMessages(prev => [...prev, { 
           role: 'assistant', 
           content: displayComment,
-          materialIds
+          materialIds: materialIds.length > 0 ? materialIds : undefined
         }]);
       } else {
         setMessages(prev => [...prev, { 
@@ -547,7 +552,7 @@ export const ChatPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-[#0A0A0F] overflow-hidden">
+    <div className="fixed inset-0 bg-dark-bg overflow-hidden">
       {/* Full screen cosmic sphere background */}
       <div 
         ref={mountRef}
@@ -558,9 +563,8 @@ export const ChatPage = () => {
       {/* UI overlay */}
       <div className="relative z-10 h-full flex flex-col">
         {/* Top section with title */}
-        <div className="flex-shrink-0 pb-4 text-center bg-gradient-to-b from-black/70 via-black/40 to-transparent" style={{ paddingTop: 'max(95px, env(safe-area-inset-top))' }}>
-          <h2 className="text-2xl font-bold text-white mb-2 drop-shadow-lg" style={{ fontFamily: 'Inter Tight, sans-serif' }}>STARUNITY AI HELPER </h2>
-
+        <div className="flex-shrink-0 pb-4 text-center bg-gradient-to-b from-dark-bg/90 via-dark-bg/50 to-transparent" style={{ paddingTop: 'max(95px, env(safe-area-inset-top))' }}>
+          <h2 className="text-2xl font-bold text-white mb-2 text-glow" style={{ fontFamily: 'Inter Tight, sans-serif' }}>STARUNITY AI HELPER</h2>
         </div>
 
         {/* Messages */}
@@ -571,15 +575,15 @@ export const ChatPage = () => {
               <div className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[80%] px-4 py-3 rounded-2xl backdrop-blur-md ${
                   msg.role === 'user' 
-                    ? 'bg-purple-600/80 border border-purple-400/30 text-white shadow-lg' 
-                    : 'bg-white/10 border border-white/20 text-white shadow-lg'
+                    ? 'bg-gradient-accent border border-purple-400/30 text-white shadow-glow-sm' 
+                    : 'glass border border-purple-500/20 text-white shadow-lg'
                 }`}>
                   <p className="text-sm">{msg.content}</p>
                 </div>
               </div>
               
               {/* Material cards carousel */}
-              {msg.role === 'assistant' && msg.materialIds && msg.materialIds.length > 0 && (
+              {msg.role === 'assistant' && msg.materialIds && msg.materialIds.length > 0 && allMaterials && (
                 <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
                   <div className="flex gap-3 pb-2">
                     {allMaterials
@@ -613,20 +617,35 @@ export const ChatPage = () => {
 
         {/* Input area */}
         <div className="fixed left-0 right-0" style={{ bottom: '70px' }}>
-          <div className="bg-black/30 backdrop-blur-3xl p-4">
+          <div className="glass-dark p-4 border-t border-purple-500/20">
             <div className="flex items-center gap-3 max-w-lg mx-auto">
           <div className="flex-1 relative">
-            <input
-              type="text"
+            <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Ask me anything..."
-              className="w-full bg-white/90 backdrop-blur-xl border border-white/30 text-gray-900 placeholder-gray-500 rounded-full px-5 py-3 pr-12 outline-none focus:bg-white focus:border-white/50 transition-all shadow-lg"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              placeholder="Напишите ваш запрос..."
+              rows={1}
+              className="w-full input-purple rounded-2xl px-5 py-3 pr-12 outline-none transition-all shadow-lg resize-none overflow-hidden"
+              style={{
+                minHeight: '48px',
+                maxHeight: '120px',
+                height: 'auto'
+              }}
+              onInput={(e) => {
+                const target = e.target as HTMLTextAreaElement;
+                target.style.height = 'auto';
+                target.style.height = Math.min(target.scrollHeight, 120) + 'px';
+              }}
             />
             <button
               onClick={toggleRecording}
-              className={`absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition-all backdrop-blur-md border ${
+              className={`absolute right-2 top-3 w-8 h-8 rounded-full flex items-center justify-center transition-all backdrop-blur-md border ${
                 isRecording 
                   ? 'bg-red-500/90 border-red-400/50 animate-pulse' 
                   : 'bg-white/20 border-white/30 hover:bg-white/30'
@@ -643,12 +662,23 @@ export const ChatPage = () => {
           <button
             onClick={handleSend}
             disabled={!message.trim() || isLoading}
-            className="w-12 h-12 bg-purple-600/80 backdrop-blur-md border border-purple-400/50 rounded-full flex items-center justify-center disabled:opacity-50 transition-all hover:scale-105 hover:bg-purple-600/90 disabled:hover:scale-100"
+            className="relative w-12 h-12 bg-gradient-accent backdrop-blur-md border border-purple-400/50 rounded-full flex items-center justify-center disabled:opacity-50 transition-all hover:scale-105 hover:shadow-glow disabled:hover:scale-100 group overflow-hidden"
           >
-            {/* Send icon from Iconify style */}
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-              <path fill="white" d="M3 20v-6l8-2l-8-2V4l19 8z"/>
-            </svg>
+            {/* Rocket icon with particles */}
+            <div className="relative z-10">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" className="transform rotate-45 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                <path fill="white" d="M13.13 22.19L11.5 18.36C13.07 17.78 14.54 17 15.9 16.09L13.13 22.19M5.64 12.5L1.81 10.87L7.91 8.1C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39C21.61 2.39 16.66 .269 11 5.93C8.81 8.12 7.5 10.53 6.65 12.64C6.37 13.39 6.56 14.21 7.11 14.77L9.24 16.89C9.79 17.45 10.61 17.63 11.36 17.35C13.5 16.53 15.88 15.19 18.07 13C23.73 7.34 21.61 2.39 21.61 2.39M14.54 9.46C13.76 8.68 13.76 7.41 14.54 6.63S16.59 5.85 17.37 6.63C18.14 7.41 18.15 8.68 17.37 9.46C16.59 10.24 15.32 10.24 14.54 9.46M8.88 16.53L7.47 15.12L8.88 16.53M6.24 22L9.88 18.36C9.54 18.27 9.21 18.12 8.91 17.91L4.83 22H6.24M2 22H3.41L8.18 17.24L6.76 15.83L2 20.59V22M2 19.17L6.09 15.09C5.88 14.79 5.73 14.47 5.64 14.12L2 17.76V19.17Z"/>
+              </svg>
+            </div>
+            {/* Animated particles */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="absolute w-1 h-1 bg-purple-400 rounded-full animate-float opacity-0 group-hover:opacity-100" style={{ left: '20%', animationDelay: '0s', animationDuration: '2s' }}></div>
+              <div className="absolute w-1.5 h-1.5 bg-purple-300 rounded-full animate-float opacity-0 group-hover:opacity-100" style={{ left: '35%', animationDelay: '0.3s', animationDuration: '2.5s' }}></div>
+              <div className="absolute w-1 h-1 bg-purple-500 rounded-full animate-float opacity-0 group-hover:opacity-100" style={{ left: '50%', animationDelay: '0.6s', animationDuration: '2s' }}></div>
+              <div className="absolute w-2 h-2 bg-purple-400/50 rounded-full animate-glow-pulse opacity-0 group-hover:opacity-100" style={{ left: '30%', bottom: '10%' }}></div>
+            </div>
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 -skew-x-12 group-hover:animate-shimmer"></div>
           </button>
             </div>
           </div>
