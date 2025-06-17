@@ -1,36 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ChatSessionsList } from './ChatSessionsList';
 import { ChatMessagesView } from './ChatMessagesView';
 import { ChatStatsView } from './ChatStatsView';
-
-interface ChatMessage {
-  id: number;
-  telegram_id: number;
-  message_type: 'user' | 'assistant';
-  content: string;
-  material_ids?: number[];
-  session_id: string;
-  created_at: string;
-  tg_users?: {
-    username?: string;
-    first_name?: string;
-    last_name?: string;
-    photo_url?: string;
-  };
-}
-
-interface ChatSession {
-  session_id: string;
-  telegram_id: number;
-  username?: string;
-  first_name?: string;
-  message_count: number;
-  session_start: string;
-  session_end: string;
-  first_message_preview: string;
-}
 
 export const AdminChatHistory = () => {
   const [activeView, setActiveView] = useState<'sessions' | 'messages' | 'stats'>('sessions');

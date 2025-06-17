@@ -49,7 +49,7 @@ export async function GET(request: Request) {
       page, limit, offset
     });
     
-    const { data, error, count } = await query;
+    const { data, error } = await query;
     
     console.log('Chat history query result:', { data: data?.length, error });
     

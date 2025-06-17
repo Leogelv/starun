@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface ChatSession {
   session_id: string;
@@ -25,11 +25,7 @@ export const ChatSessionsList: React.FC<ChatSessionsListProps> = ({ onSessionSel
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    fetchSessions();
-  }, [page, telegramIdFilter]);
-
-  const fetchSessions = async () => {
+  const fetchSessions = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -49,7 +45,11 @@ export const ChatSessionsList: React.FC<ChatSessionsListProps> = ({ onSessionSel
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, telegramIdFilter]);
+
+  useEffect(() => {
+    fetchSessions();
+  }, [fetchSessions]);
 
   const filteredSessions = sessions.filter(session => {
     if (!searchTerm) return true;

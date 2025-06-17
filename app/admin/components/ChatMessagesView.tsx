@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface ChatMessage {
   id: number;
@@ -18,21 +18,24 @@ interface ChatMessage {
   };
 }
 
+interface UserInfo {
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  photo_url?: string;
+}
+
 interface ChatMessagesViewProps {
   sessionId: string;
   onBack: () => void;
 }
 
-export const ChatMessagesView: React.FC<ChatMessagesViewProps> = ({ sessionId, onBack }) => {
+export const ChatMessagesView: React.FC<ChatMessagesViewProps> = ({ sessionId }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userInfo, setUserInfo] = useState<any>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
-  useEffect(() => {
-    fetchMessages();
-  }, [sessionId]);
-
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/chat-history?session_id=${sessionId}&limit=1000`);
@@ -45,7 +48,7 @@ export const ChatMessagesView: React.FC<ChatMessagesViewProps> = ({ sessionId, o
         
         // Set user info from first message
         if (sortedMessages.length > 0) {
-          setUserInfo(sortedMessages[0].tg_users);
+          setUserInfo(sortedMessages[0].tg_users || null);
         }
       }
     } catch (error) {
@@ -53,7 +56,11 @@ export const ChatMessagesView: React.FC<ChatMessagesViewProps> = ({ sessionId, o
     } finally {
       setLoading(false);
     }
-  };
+  }, [sessionId]);
+
+  useEffect(() => {
+    fetchMessages();
+  }, [fetchMessages]);
 
   const formatTime = (dateString: string) => {
     return new Date(dateString).toLocaleTimeString('ru-RU', {
