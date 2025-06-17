@@ -95,11 +95,29 @@ export async function POST(request: NextRequest) {
       const buffer = Buffer.from(await audioFile.arrayBuffer());
       
       // Create a proper File-like object that OpenAI SDK expects
-      // Use Blob with name property since File constructor might not be available in Node.js
-      const fileBlob = new Blob([buffer], { type: mimeType });
-      // Add name property for OpenAI SDK
-      Object.defineProperty(fileBlob, 'name', { value: fileName });
-      const fileObject = fileBlob as File;
+      // For Node.js compatibility, we need to create a File-like object manually
+      const fileObject = {
+        stream: () => new ReadableStream({
+          start(controller) {
+            controller.enqueue(buffer);
+            controller.close();
+          }
+        }),
+        arrayBuffer: () => Promise.resolve(buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)),
+        bytes: () => Promise.resolve(new Uint8Array(buffer)),
+        size: buffer.length,
+        type: mimeType,
+        name: fileName,
+        lastModified: Date.now(),
+        // Add other File interface properties
+        webkitRelativePath: '',
+        slice: (start?: number, end?: number, contentType?: string) => {
+          const sliced = buffer.slice(start, end);
+          return new Blob([sliced], { type: contentType || mimeType });
+        },
+        text: () => Promise.resolve(buffer.toString()),
+        [Symbol.toStringTag]: 'File'
+      } as unknown as File;
 
       console.log('✅ Sending to OpenAI Whisper:', {
         fileName,
