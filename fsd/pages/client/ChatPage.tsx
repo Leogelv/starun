@@ -460,8 +460,10 @@ export const ChatPage = () => {
       
       const data = await response.json();
       
-      if (data.text && data.text.trim()) {
+      if (data.success && data.text && data.text.trim()) {
         setMessage(prev => prev + data.text.trim() + ' ');
+      } else if (!data.success) {
+        alert(data.text || 'Ошибка распознавания речи');
       }
       
     } catch (error) {
@@ -548,7 +550,7 @@ export const ChatPage = () => {
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Ask me anything..."
-              className="w-full bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder-white/60 rounded-full px-5 py-3 pr-12 outline-none focus:bg-white/15 focus:border-white/30 transition-all shadow-lg"
+              className="w-full bg-white/90 backdrop-blur-xl border border-white/30 text-gray-900 placeholder-gray-500 rounded-full px-5 py-3 pr-12 outline-none focus:bg-white focus:border-white/50 transition-all shadow-lg"
             />
             <button
               onClick={toggleRecording}

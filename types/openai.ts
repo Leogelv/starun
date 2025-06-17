@@ -8,7 +8,7 @@ export interface OpenAIError {
 
 export interface UpdateData {
   updated_at: string;
-  avatar_url?: string;
+  photo_url?: string;
   first_name?: string;
   last_name?: string;
   username?: string;

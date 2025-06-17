@@ -32,7 +32,7 @@ export const ProfilePage = () => {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            avatar_url: telegramUser.photo_url,
+                            photo_url: telegramUser.photo_url,
                             first_name: telegramUser.first_name,
                             last_name: telegramUser.last_name,
                             username: telegramUser.username,

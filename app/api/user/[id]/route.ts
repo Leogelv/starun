@@ -26,7 +26,7 @@ export async function PATCH(
     const { id } = await params;
     try {
         const body = await request.json();
-        const { avatar_url, first_name, last_name, username } = body;
+        const { photo_url, first_name, last_name, username } = body;
 
         console.log('Updating user:', id, body);
 
@@ -50,7 +50,7 @@ export async function PATCH(
                     first_name,
                     last_name,
                     username,
-                    avatar_url,
+                    photo_url,
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString()
                 })
@@ -69,7 +69,7 @@ export async function PATCH(
                 updated_at: new Date().toISOString()
             };
 
-            if (avatar_url) updateData.avatar_url = avatar_url;
+            if (photo_url) updateData.photo_url = photo_url;
             if (first_name) updateData.first_name = first_name;
             if (last_name) updateData.last_name = last_name;
             if (username) updateData.username = username;
