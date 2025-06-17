@@ -35,6 +35,27 @@ export async function POST(request: NextRequest) {
       size: audioFile.size
     });
 
+    // Validate file size (OpenAI Whisper has 25MB limit)
+    const maxSize = 25 * 1024 * 1024; // 25MB
+    if (audioFile.size > maxSize) {
+      console.error('❌ File too large:', audioFile.size, 'bytes (max:', maxSize, ')');
+      return NextResponse.json({ 
+        error: 'File too large',
+        success: false,
+        text: 'Аудио файл слишком большой. Максимальный размер: 25MB'
+      }, { status: 400 });
+    }
+
+    // Check if file is empty
+    if (audioFile.size === 0) {
+      console.error('❌ Empty file');
+      return NextResponse.json({ 
+        error: 'Empty file',
+        success: false,
+        text: 'Аудио файл пустой'
+      }, { status: 400 });
+    }
+
     // Check if OpenAI API key is configured
     if (!process.env.OPENAI_API_KEY) {
       console.error('OpenAI API key not configured');
@@ -45,18 +66,40 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Convert webm to a supported format if needed
+    // Convert and process audio file for OpenAI Whisper
     try {
-      // Create a new File object with proper extension
-      const fileName = audioFile.name.endsWith('.webm') ? audioFile.name : 'recording.webm';
-      const processedFile = new File([audioFile], fileName, { type: audioFile.type });
+      // Determine proper file extension and type
+      let fileName = audioFile.name;
+      let mimeType = audioFile.type;
+      
+      // Handle different audio formats
+      if (fileName.endsWith('.m4a') || mimeType === 'audio/m4a') {
+        fileName = fileName.endsWith('.m4a') ? fileName : 'recording.m4a';
+        mimeType = 'audio/m4a';
+      } else if (fileName.endsWith('.webm') || mimeType.includes('webm')) {
+        fileName = fileName.endsWith('.webm') ? fileName : 'recording.webm';
+        mimeType = 'audio/webm';
+      } else if (fileName.endsWith('.wav') || mimeType === 'audio/wav') {
+        fileName = fileName.endsWith('.wav') ? fileName : 'recording.wav';
+        mimeType = 'audio/wav';
+      } else if (fileName.endsWith('.mp3') || mimeType === 'audio/mp3') {
+        fileName = fileName.endsWith('.mp3') ? fileName : 'recording.mp3';
+        mimeType = 'audio/mp3';
+      } else {
+        // Default to webm if unknown
+        fileName = 'recording.webm';
+        mimeType = 'audio/webm';
+      }
+      
+      const processedFile = new File([audioFile], fileName, { type: mimeType });
 
-      console.log('Sending to OpenAI Whisper:', {
+      console.log('✅ Sending to OpenAI Whisper:', {
         fileName: processedFile.name,
         type: processedFile.type,
         size: processedFile.size
       });
       
+      console.log('📤 Making request to OpenAI Whisper...');
       const transcription = await openai.audio.transcriptions.create({
         file: processedFile,
         model: 'whisper-1',
@@ -66,7 +109,12 @@ export async function POST(request: NextRequest) {
         prompt: 'Это запрос о медитации, йоге, практиках осознанности или здоровье.',
       });
 
-      console.log('Transcription successful:', transcription);
+      console.log('✅ Transcription successful:', {
+        text: transcription.text,
+        language: transcription.language,
+        duration: transcription.duration,
+        segments: transcription.segments?.length
+      });
 
       const transcribedText = transcription.text || '';
       const confidence = transcription.segments?.[0]?.avg_logprob || -1;

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Speech API Test</title>
+</head>
+<body>
+    <h1>Speech API Test</h1>
+    <input type="file" id="audioFile" accept="audio/*">
+    <button onclick="testSpeechAPI()">Test Speech API</button>
+    <div id="result"></div>
+
+    <script>
+        async function testSpeechAPI() {
+            const fileInput = document.getElementById('audioFile');
+            const resultDiv = document.getElementById('result');
+            
+            if (!fileInput.files[0]) {
+                resultDiv.innerHTML = 'Please select an audio file';
+                return;
+            }
+            
+            const audioFile = fileInput.files[0];
+            console.log('Testing with file:', audioFile.name, audioFile.size, 'bytes');
+            
+            resultDiv.innerHTML = 'Uploading...';
+            
+            try {
+                const formData = new FormData();
+                formData.append('audio', audioFile);
+                
+                const response = await fetch('http://192.168.2.60:3000/api/speech', {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                console.log('Response:', response.status, response.statusText);
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                resultDiv.innerHTML = `
+                    <h3>Response:</h3>
+                    <p><strong>Status:</strong> ${response.status}</p>
+                    <p><strong>Success:</strong> ${data.success}</p>
+                    <p><strong>Text:</strong> ${data.text}</p>
+                    <p><strong>Error:</strong> ${data.error || 'None'}</p>
+                    <p><strong>Confidence:</strong> ${data.confidence}</p>
+                `;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

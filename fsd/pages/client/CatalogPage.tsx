@@ -76,7 +76,7 @@ export const CatalogPage = () => {
             <div className="w-12 h-12 rounded-full border-2 border-purple-500 border-t-transparent animate-spin"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {materials?.map((material) => {
               const isExpanded = expandedCard === material.id;
               const displayText = isExpanded 

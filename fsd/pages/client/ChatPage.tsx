@@ -289,7 +289,7 @@ export const ChatPage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          telegram_id: user?.telegram_id || telegramUser?.id || 123456789,
+          telegram_id: user?.telegram_id || telegramUser?.id,
           question: userMessage,
         }),
       });
@@ -507,7 +507,7 @@ export const ChatPage = () => {
       <div className="relative z-10 h-full flex flex-col">
         {/* Top section with title */}
         <div className="flex-shrink-0 pt-20 pb-4 text-center bg-gradient-to-b from-black/70 via-black/40 to-transparent">
-          <h2 className="text-2xl font-bold font-['Unbounded'] text-white mb-2 drop-shadow-lg">STARUNITY AI HELPER </h2>
+          <h2 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">STARUNITY AI HELPER </h2>
 
         </div>
 
