@@ -392,13 +392,20 @@ export const ChatPage = () => {
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         audioChunksRef.current = [];
         
-        const mediaRecorder = new MediaRecorder(stream, { 
-          mimeType: MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
-            ? 'audio/webm;codecs=opus' 
-            : MediaRecorder.isTypeSupported('audio/webm') 
-            ? 'audio/webm' 
-            : 'audio/mp4'
-        });
+        // Choose the best supported audio format for Whisper
+        let mimeType = 'audio/webm';
+        if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+          mimeType = 'audio/webm;codecs=opus';
+        } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+          mimeType = 'audio/webm';
+        } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+          mimeType = 'audio/mp4';
+        } else if (MediaRecorder.isTypeSupported('audio/wav')) {
+          mimeType = 'audio/wav';
+        }
+        
+        console.log('Using audio format:', mimeType);
+        const mediaRecorder = new MediaRecorder(stream, { mimeType });
         
         mediaRecorder.ondataavailable = (event) => {
           if (event.data.size > 0) {
@@ -411,11 +418,17 @@ export const ChatPage = () => {
             type: mediaRecorder.mimeType
           });
           
+          console.log('Audio recorded:', {
+            size: audioBlob.size,
+            type: audioBlob.type,
+            chunks: audioChunksRef.current.length
+          });
+          
           // Stop all tracks
           stream.getTracks().forEach(track => track.stop());
           
           // Send audio to transcription API
-          await transcribeAudio(audioBlob);
+          await transcribeAudio(audioBlob, mediaRecorder.mimeType);
         };
         
         mediaRecorderRef.current = mediaRecorder;
@@ -442,7 +455,7 @@ export const ChatPage = () => {
     }
   };
 
-  const transcribeAudio = async (audioBlob: Blob) => {
+  const transcribeAudio = async (audioBlob: Blob, mimeType: string) => {
     try {
       setIsLoading(true);
       
@@ -451,8 +464,31 @@ export const ChatPage = () => {
         blobType: audioBlob.type
       });
       
+      // Check if audio blob is too small (less than 1KB probably means no audio)
+      if (audioBlob.size < 1000) {
+        console.warn('Audio blob too small:', audioBlob.size, 'bytes');
+        alert('Аудиозапись слишком короткая. Попробуйте записать дольше.');
+        return;
+      }
+      
+      // Determine proper filename based on mime type
+      let filename = 'recording.webm';
+      if (mimeType.includes('mp4')) {
+        filename = 'recording.mp4';
+      } else if (mimeType.includes('wav')) {
+        filename = 'recording.wav';
+      } else if (mimeType.includes('webm')) {
+        filename = 'recording.webm';
+      }
+      
       const formData = new FormData();
-      formData.append('audio', audioBlob, 'recording.webm');
+      formData.append('audio', audioBlob, filename);
+      
+      console.log('FormData prepared:', {
+        filename,
+        blobSize: audioBlob.size,
+        blobType: audioBlob.type
+      });
       
       console.log('Sending request to /api/speech...');
       const response = await fetch('/api/speech', {

@@ -28,7 +28,7 @@
                 const formData = new FormData();
                 formData.append('audio', audioFile);
                 
-                const response = await fetch('http://192.168.2.60:3000/api/speech', {
+                const response = await fetch('https://192.168.2.60:3000/api/speech', {
                     method: 'POST',
                     body: formData,
                 });
