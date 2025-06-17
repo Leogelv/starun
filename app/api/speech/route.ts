@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { OpenAIError } from '@/types/openai';
-import { Readable } from 'stream';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -92,30 +91,22 @@ export async function POST(request: NextRequest) {
         mimeType = 'audio/webm';
       }
       
-      // Convert File to buffer and create a proper stream for OpenAI
+      // Convert File to buffer - OpenAI SDK handles the rest
       const buffer = Buffer.from(await audioFile.arrayBuffer());
       
-      // Create a Readable stream from buffer for OpenAI
-      const stream = new Readable({
-        read() {}
-      });
-      stream.push(buffer);
-      stream.push(null); // Signal end of stream
-      
-      // Add required properties for OpenAI
-      stream.path = fileName;
-      stream.type = mimeType;
+      // Create a blob-like object that OpenAI SDK expects
+      const fileBlob = new Blob([buffer], { type: mimeType });
+      Object.defineProperty(fileBlob, 'name', { value: fileName });
 
       console.log('✅ Sending to OpenAI Whisper:', {
         fileName,
         type: mimeType,
-        size: buffer.length,
-        streamType: typeof stream
+        size: buffer.length
       });
       
       console.log('📤 Making request to OpenAI Whisper...');
       const transcription = await openai.audio.transcriptions.create({
-        file: stream,
+        file: fileBlob as any,
         model: 'whisper-1',
         language: 'ru',
         response_format: 'verbose_json',
