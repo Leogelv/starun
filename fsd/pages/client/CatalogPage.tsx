@@ -104,32 +104,35 @@ export const CatalogPage = () => {
                     </div>
                     
                     {material.description && (
-                      <p className={`text-gray-300/80 text-sm leading-relaxed ${!isExpanded ? 'line-clamp-3' : ''}`}>
-                        {displayText}
-                      </p>
+                      <div className="relative">
+                        <p className={`text-gray-300/80 text-sm leading-relaxed ${!isExpanded ? 'line-clamp-3' : ''} ${material.description.length > 120 ? 'pb-8' : ''}`}>
+                          {displayText}
+                        </p>
+                        
+                        {/* Expand button - positioned relative to text */}
+                        {material.description.length > 120 && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedCard(isExpanded ? null : material.id);
+                            }}
+                            className="absolute bottom-0 left-0 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 hover:bg-white/30 z-10"
+                          >
+                            <svg 
+                              width="12" 
+                              height="12" 
+                              viewBox="0 0 24 24" 
+                              fill="none"
+                              className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                            >
+                              <path d="M7 10l5 5 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
 
-                  {/* Expand button */}
-                  {material.description && material.description.length > 120 && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setExpandedCard(isExpanded ? null : material.id);
-                      }}
-                      className="absolute bottom-3 left-3 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 hover:bg-white/30 z-10"
-                    >
-                      <svg 
-                        width="12" 
-                        height="12" 
-                        viewBox="0 0 24 24" 
-                        fill="none"
-                        className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
-                      >
-                        <path d="M7 10l5 5 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                  )}
                 </div>
               );
             })}

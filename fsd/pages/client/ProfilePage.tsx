@@ -23,11 +23,11 @@ export const ProfilePage = () => {
     console.log('ProfilePage - Telegram photo_url:', telegramUser?.photo_url);
     console.log('ProfilePage - DB photo_url:', user?.photo_url);
 
-    // Update user data in Supabase when component mounts
+    // Update user data in Supabase when component mounts - run only once
     useEffect(() => {
         const updateUserData = async () => {
-            if (telegramUser?.id && !isUpdatingAvatar) {
-                console.log('Updating user data in Supabase:', {
+            if (telegramUser?.id && !user && !isUpdatingAvatar) {
+                console.log('Updating user data in Supabase - ONE TIME ONLY:', {
                     telegram_id: telegramUser.id,
                     photo_url: telegramUser.photo_url,
                     first_name: telegramUser.first_name,
@@ -67,11 +67,11 @@ export const ProfilePage = () => {
             }
         };
 
-        // Only run once when telegramUser is available
-        if (telegramUser?.id) {
+        // Only run ONCE when telegramUser is available and no user in DB yet
+        if (telegramUser?.id && !user && !isUpdatingAvatar) {
             updateUserData();
         }
-    }, [telegramUser?.id]); // Only depend on telegram user ID
+    }, [telegramUser?.id]); // Remove user?.id dependency to prevent loop
     
     return (
         <div className="min-h-screen bg-[#0A0A0F] pb-24">
@@ -116,7 +116,7 @@ export const ProfilePage = () => {
                             </div>
                         )}
                     </div>
-                    <h1 className="text-2xl font-bold text-white font-['Unbounded'] mb-2">
+                    <h1 className="text-2xl font-bold text-white font-['Inter_Tight'] mb-2">
                         {displayName} {displayLastName}
                     </h1>
                     {displayUsername && (

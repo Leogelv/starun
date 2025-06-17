@@ -91,22 +91,31 @@ export async function POST(request: NextRequest) {
         mimeType = 'audio/webm';
       }
       
-      // OpenAI accepts the original File object directly in Node.js
-      const processedFile = audioFile;
+      // Convert File to buffer and create a proper stream for OpenAI
+      const buffer = Buffer.from(await audioFile.arrayBuffer());
       
-      // Override name and type if needed
-      Object.defineProperty(processedFile, 'name', { value: fileName, writable: false });
-      Object.defineProperty(processedFile, 'type', { value: mimeType, writable: false });
+      // Create a Readable stream from buffer for OpenAI
+      const { Readable } = require('stream');
+      const stream = new Readable({
+        read() {}
+      });
+      stream.push(buffer);
+      stream.push(null); // Signal end of stream
+      
+      // Add required properties for OpenAI
+      stream.path = fileName;
+      stream.type = mimeType;
 
       console.log('✅ Sending to OpenAI Whisper:', {
-        fileName: processedFile.name,
-        type: processedFile.type,
-        size: processedFile.size
+        fileName,
+        type: mimeType,
+        size: buffer.length,
+        streamType: typeof stream
       });
       
       console.log('📤 Making request to OpenAI Whisper...');
       const transcription = await openai.audio.transcriptions.create({
-        file: processedFile,
+        file: stream,
         model: 'whisper-1',
         language: 'ru',
         response_format: 'verbose_json',
