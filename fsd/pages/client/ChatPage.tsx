@@ -446,29 +446,49 @@ export const ChatPage = () => {
     try {
       setIsLoading(true);
       
+      console.log('Starting audio transcription...', {
+        blobSize: audioBlob.size,
+        blobType: audioBlob.type
+      });
+      
       const formData = new FormData();
       formData.append('audio', audioBlob, 'recording.webm');
       
+      console.log('Sending request to /api/speech...');
       const response = await fetch('/api/speech', {
         method: 'POST',
         body: formData,
       });
       
+      console.log('Speech API response:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+      });
+      
       if (!response.ok) {
-        throw new Error('Failed to transcribe audio');
+        const errorText = await response.text();
+        console.error('Speech API error response:', errorText);
+        throw new Error(`Speech API failed: ${response.status} ${response.statusText}`);
       }
       
       const data = await response.json();
+      console.log('Speech API response data:', data);
       
       if (data.success && data.text && data.text.trim()) {
+        console.log('Successfully transcribed:', data.text);
         setMessage(prev => prev + data.text.trim() + ' ');
       } else if (!data.success) {
+        console.error('Speech API returned error:', data);
         alert(data.text || 'Ошибка распознавания речи');
+      } else {
+        console.warn('Speech API returned empty result:', data);
+        alert('Не удалось распознать речь');
       }
       
     } catch (error) {
       console.error('Transcription error:', error);
-      alert('Ошибка при распознавании речи. Попробуйте еще раз.');
+      alert(`Ошибка при распознавании речи: ${error instanceof Error ? error.message : 'Неизвестная ошибка'}`);
     } finally {
       setIsLoading(false);
     }
@@ -492,7 +512,7 @@ export const ChatPage = () => {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-4 pb-24">
+        <div className="flex-1 overflow-y-auto px-4" style={{ paddingBottom: 'calc(80px + 70px)' }}>
           <div className="w-full max-w-lg mx-auto space-y-4">
           {messages.map((msg, idx) => (
             <div key={idx} className="space-y-3">
@@ -540,7 +560,7 @@ export const ChatPage = () => {
         </div>
 
         {/* Input area */}
-        <div className="fixed bottom-16 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent">
+        <div className="fixed left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent" style={{ bottom: '70px' }}>
           <div className="bg-white/5 backdrop-blur-3xl border-t border-white/10 p-4">
             <div className="flex items-center gap-3 max-w-lg mx-auto">
           <div className="flex-1 relative">
@@ -562,9 +582,9 @@ export const ChatPage = () => {
             >
               {/* Microphone icon from Iconify style */}
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
-                <path fill={isRecording ? "white" : "white"} d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z"/>
-                <path fill={isRecording ? "white" : "white"} d="M17 11a1 1 0 0 1 2 0a7 7 0 1 1-14 0a1 1 0 0 1 2 0a5 5 0 1 0 10 0Z"/>
-                <path fill={isRecording ? "white" : "white"} d="M12 19a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Z"/>
+                <path fill={isRecording ? "white" : "#6B7280"} d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z"/>
+                <path fill={isRecording ? "white" : "#6B7280"} d="M17 11a1 1 0 0 1 2 0a7 7 0 1 1-14 0a1 1 0 0 1 2 0a5 5 0 1 0 10 0Z"/>
+                <path fill={isRecording ? "white" : "#6B7280"} d="M12 19a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1Z"/>
               </svg>
             </button>
           </div>

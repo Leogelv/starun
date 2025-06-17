@@ -8,17 +8,28 @@ const openai = new OpenAI({
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('Speech API called');
+    console.log('=== Speech API POST called ===');
     
     const formData = await request.formData();
+    console.log('FormData entries:', Array.from(formData.entries()).map(([key, value]) => ({
+      key,
+      valueType: typeof value,
+      isFile: value instanceof File,
+      ...(value instanceof File && { name: value.name, size: value.size, type: value.type })
+    })));
+    
     const audioFile = formData.get('audio') as File;
     
     if (!audioFile) {
-      console.log('No audio file provided');
-      return NextResponse.json({ error: 'No audio file provided' }, { status: 400 });
+      console.error('❌ No audio file provided in FormData');
+      return NextResponse.json({ 
+        error: 'No audio file provided',
+        success: false,
+        text: 'Аудио файл не найден в запросе'
+      }, { status: 400 });
     }
 
-    console.log('Received audio file:', {
+    console.log('✅ Received audio file:', {
       name: audioFile.name,
       type: audioFile.type,
       size: audioFile.size

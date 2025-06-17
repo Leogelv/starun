@@ -104,7 +104,7 @@ export const CatalogPage = () => {
                     </div>
                     
                     {material.description && (
-                      <p className="text-gray-300/80 text-sm leading-relaxed line-clamp-3">
+                      <p className={`text-gray-300/80 text-sm leading-relaxed ${!isExpanded ? 'line-clamp-3' : ''}`}>
                         {displayText}
                       </p>
                     )}
