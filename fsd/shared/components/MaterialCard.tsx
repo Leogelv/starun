@@ -7,7 +7,7 @@ interface MaterialCardProps {
   material: {
     id: number;
     material_name: string;
-    description?: string;
+    description?: string | null;
     message_link: string;
   };
   compact?: boolean;

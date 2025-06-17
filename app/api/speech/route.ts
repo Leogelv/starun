@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { OpenAIError } from '@/types/openai';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -98,39 +99,41 @@ export async function POST(request: NextRequest) {
         confidence 
       });
 
-    } catch (openaiError: any) {
+    } catch (openaiError: unknown) {
+      const error = openaiError as OpenAIError;
       console.error('OpenAI Whisper detailed error:', {
-        message: openaiError.message,
-        type: openaiError.type,
-        code: openaiError.code,
-        status: openaiError.status,
-        stack: openaiError.stack
+        message: error.message,
+        type: error.type,
+        code: error.code,
+        status: error.status,
+        stack: error.stack
       });
       
       let errorMessage = 'Ошибка распознавания речи.';
       
-      if (openaiError.code === 'invalid_api_key') {
+      if (error.code === 'invalid_api_key') {
         errorMessage = 'Неверный API ключ OpenAI.';
-      } else if (openaiError.code === 'insufficient_quota') {
+      } else if (error.code === 'insufficient_quota') {
         errorMessage = 'Превышена квота OpenAI API.';
-      } else if (openaiError.message?.includes('audio')) {
+      } else if (error.message?.includes('audio')) {
         errorMessage = 'Неподдерживаемый формат аудио. Попробуйте еще раз.';
       }
       
       return NextResponse.json({ 
         text: errorMessage,
         success: false,
-        error: openaiError.message,
-        code: openaiError.code
+        error: error.message,
+        code: error.code
       });
     }
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const generalError = error as Error;
     console.error('Speech transcription general error:', error);
     return NextResponse.json(
       { 
         error: 'Failed to transcribe audio', 
-        details: error.message,
+        details: generalError.message,
         text: 'Общая ошибка сервера. Попробуйте позже.',
         success: false
       },

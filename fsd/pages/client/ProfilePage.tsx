@@ -18,7 +18,7 @@ export const ProfilePage = () => {
     const displayLastName = user?.last_name || telegramUser?.last_name || '';
     const displayUsername = user?.username || telegramUser?.username;
     const displayTelegramId = user?.telegram_id || telegramUser?.id;
-    const displayAvatarUrl = telegramUser?.photo_url || user?.avatar_url;
+    const displayAvatarUrl = telegramUser?.photo_url || user?.photo_url;
 
     // Update avatar URL in Supabase when component mounts
     useEffect(() => {

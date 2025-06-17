@@ -76,12 +76,12 @@ export const CatalogPage = () => {
             <div className="w-12 h-12 rounded-full border-2 border-purple-500 border-t-transparent animate-spin"></div>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {materials?.map((material) => {
               const isExpanded = expandedCard === material.id;
               const displayText = isExpanded 
                 ? material.description 
-                : truncateText(material.description || '', 140);
+                : truncateText(material.description || '', 120);
 
               return (
                 <div
@@ -90,41 +90,41 @@ export const CatalogPage = () => {
                 >
                   <div 
                     onClick={() => handleMaterialClick(material.message_link)}
-                    className="bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl rounded-3xl p-6 border border-white/10 cursor-pointer transition-all hover:border-white/20"
+                    className="bg-gradient-to-br from-white/8 to-white/12 backdrop-blur-xl rounded-2xl p-5 border border-white/15 cursor-pointer transition-all duration-300 hover:border-white/30 hover:shadow-lg hover:shadow-white/5 hover:scale-[1.02] group-hover:bg-white/15"
                   >
                     <div className="flex items-start justify-between mb-3">
-                      <h3 className="text-lg font-semibold text-white pr-4">
+                      <h3 className="text-base font-semibold text-white pr-3 leading-snug line-clamp-2">
                         {material.material_name}
                       </h3>
-                      <div className="flex-shrink-0 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <div className="flex-shrink-0 w-7 h-7 bg-white/15 rounded-full flex items-center justify-center transition-all duration-200 group-hover:bg-white/25 group-hover:scale-110">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                           <path d="M5 12h14m-7-7l7 7-7 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </div>
                     </div>
                     
                     {material.description && (
-                      <p className="text-gray-400 text-sm leading-relaxed">
+                      <p className="text-gray-300/80 text-sm leading-relaxed line-clamp-3">
                         {displayText}
                       </p>
                     )}
                   </div>
 
                   {/* Expand button */}
-                  {material.description && material.description.length > 140 && (
+                  {material.description && material.description.length > 120 && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setExpandedCard(isExpanded ? null : material.id);
                       }}
-                      className="absolute bottom-3 right-3 w-6 h-6 bg-white/10 rounded-full flex items-center justify-center transition-transform hover:scale-110"
+                      className="absolute bottom-3 right-3 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 hover:bg-white/30"
                     >
                       <svg 
                         width="12" 
                         height="12" 
                         viewBox="0 0 24 24" 
                         fill="none"
-                        className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                        className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
                       >
                         <path d="M7 10l5 5 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>

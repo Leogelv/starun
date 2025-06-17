@@ -61,6 +61,8 @@ export const ChatPage = () => {
     const blobScale = 3;
 
     function init() {
+      if (!container) return;
+      
       scene = new THREE.Scene();
 
       camera = new THREE.PerspectiveCamera(
@@ -90,7 +92,7 @@ export const ChatPage = () => {
       // OrbitControls
       controls = new OrbitControls(camera, renderer.domElement);
       controls.autoRotate = true;
-      controls.autoRotateSpeed = 4;
+      controls.autoRotateSpeed = 1.5;
       controls.maxDistance = 350;
       controls.minDistance = 150;
       controls.enablePan = false;
@@ -223,9 +225,9 @@ export const ChatPage = () => {
         vertex.normalize();
         
         const distance = 30 + noise3D(
-          vertex.x + time * 0.0005,
-          vertex.y + time * 0.0003,
-          vertex.z + time * 0.0008
+          vertex.x + time * 0.0002,
+          vertex.y + time * 0.0001,
+          vertex.z + time * 0.0003
         ) * blobScale;
         
         vertex.multiplyScalar(distance);
@@ -234,12 +236,12 @@ export const ChatPage = () => {
       
       positionAttribute.needsUpdate = true;
       nucleusGeometry.computeVertexNormals();
-      nucleus.rotation.y += 0.002;
+      nucleus.rotation.y += 0.001;
 
       // Sphere Background Animation
-      sphereBg.rotation.x += 0.002;
-      sphereBg.rotation.y += 0.002;
-      sphereBg.rotation.z += 0.002;
+      sphereBg.rotation.x += 0.001;
+      sphereBg.rotation.y += 0.001;
+      sphereBg.rotation.z += 0.001;
 
       controls.update();
       renderer.render(scene, camera);
@@ -251,6 +253,7 @@ export const ChatPage = () => {
 
     // Handle resize
     function onWindowResize() {
+      if (!container) return;
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(container.clientWidth, container.clientHeight);
@@ -261,8 +264,10 @@ export const ChatPage = () => {
     // Cleanup
     return () => {
       window.removeEventListener('resize', onWindowResize);
-      container.removeChild(renderer.domElement);
-      renderer.dispose();
+      if (container && renderer?.domElement) {
+        container.removeChild(renderer.domElement);
+      }
+      renderer?.dispose();
     };
   }, []);
 
@@ -300,14 +305,18 @@ export const ChatPage = () => {
       const responseData = await response.json();
       console.log('Received response data:', responseData);
       
-      // Extract material IDs from the response structure
+      // Extract material IDs and comment from the response structure
       let materialIds: number[] = [];
+      let assistantComment = '';
       
       if (Array.isArray(responseData) && responseData.length > 0 && responseData[0].output) {
         try {
           const outputData = JSON.parse(responseData[0].output);
           if (outputData.results && Array.isArray(outputData.results)) {
             materialIds = outputData.results;
+          }
+          if (outputData.comment) {
+            assistantComment = outputData.comment;
           }
         } catch (parseError) {
           console.error('Failed to parse output:', parseError);
@@ -318,13 +327,14 @@ export const ChatPage = () => {
       }
       
       console.log('Extracted material IDs:', materialIds);
+      console.log('Assistant comment:', assistantComment);
       
       if (materialIds.length > 0) {
-        const recommendedMaterials = allMaterials?.filter(m => materialIds.includes(m.id)) || [];
+        const displayComment = assistantComment || `Я нашел ${materialIds.length} ${materialIds.length === 1 ? 'практику' : 'практики'} для вас:`;
         
         setMessages(prev => [...prev, { 
           role: 'assistant', 
-          content: `Я нашел ${materialIds.length} ${materialIds.length === 1 ? 'практику' : 'практики'} для вас:`,
+          content: displayComment,
           materialIds
         }]);
       } else {
@@ -529,7 +539,7 @@ export const ChatPage = () => {
 
         {/* Input area */}
         <div className="fixed bottom-16 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent">
-          <div className="bg-black/40 backdrop-blur-3xl border-t border-white/20 p-4">
+          <div className="bg-white/5 backdrop-blur-3xl border-t border-white/10 p-4">
             <div className="flex items-center gap-3 max-w-lg mx-auto">
           <div className="flex-1 relative">
             <input
@@ -538,7 +548,7 @@ export const ChatPage = () => {
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Ask me anything..."
-              className="w-full bg-black/30 backdrop-blur-md border border-white/30 text-white placeholder-white/70 rounded-full px-5 py-3 pr-12 outline-none focus:bg-black/40 focus:border-white/50 transition-all shadow-lg"
+              className="w-full bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder-white/60 rounded-full px-5 py-3 pr-12 outline-none focus:bg-white/15 focus:border-white/30 transition-all shadow-lg"
             />
             <button
               onClick={toggleRecording}
