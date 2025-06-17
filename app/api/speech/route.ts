@@ -1,34 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
-import { OpenAIError } from '@/types/openai';
-import fs from 'fs';
-import path from 'path';
-import { tmpdir } from 'os';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const WHISPER_ENDPOINT = 'https://primary-production-ee24.up.railway.app/webhook/whispa';
 
 export async function POST(request: NextRequest) {
   try {
     console.log('=== Speech API POST called ===');
-    console.log('🏗️ BUILD INFO: Node.js version:', process.version);
-    console.log('🏗️ BUILD INFO: File constructor available:', typeof File !== 'undefined');
-    console.log('🏗️ BUILD INFO: Current time:', new Date().toISOString());
-    console.log('🏗️ BUILD INFO: Environment:', process.env.NODE_ENV);
+    console.log('🏗️ Proxying to external whisper endpoint');
     
+    // Get the form data from the request
     const formData = await request.formData();
-    console.log('FormData entries:', Array.from(formData.entries()).map(([key, value]) => ({
-      key,
-      valueType: typeof value,
-      isFile: value instanceof File,
-      ...(value instanceof File && { name: value.name, size: value.size, type: value.type })
-    })));
-    
     const audioFile = formData.get('audio') as File;
     
     if (!audioFile) {
-      console.error('❌ No audio file provided in FormData');
+      console.error('❌ No audio file provided');
       return NextResponse.json({ 
         error: 'No audio file provided',
         success: false,
@@ -42,10 +26,10 @@ export async function POST(request: NextRequest) {
       size: audioFile.size
     });
 
-    // Validate file size (OpenAI Whisper has 25MB limit)
-    const maxSize = 25 * 1024 * 1024; // 25MB
+    // Validate file size (25MB limit)
+    const maxSize = 25 * 1024 * 1024;
     if (audioFile.size > maxSize) {
-      console.error('❌ File too large:', audioFile.size, 'bytes (max:', maxSize, ')');
+      console.error('❌ File too large:', audioFile.size);
       return NextResponse.json({ 
         error: 'File too large',
         success: false,
@@ -53,192 +37,68 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Check if file is empty
-    if (audioFile.size === 0) {
-      console.error('❌ Empty file');
+    // Create new FormData for the external request
+    const externalFormData = new FormData();
+    
+    // Convert File to Blob for the external request
+    const arrayBuffer = await audioFile.arrayBuffer();
+    const blob = new Blob([arrayBuffer], { type: audioFile.type });
+    
+    // Add the file to FormData with the expected field name
+    externalFormData.append('file', blob, audioFile.name);
+
+    console.log('📤 Sending to external Whisper API...');
+    
+    // Make request to external endpoint
+    const response = await fetch(WHISPER_ENDPOINT, {
+      method: 'POST',
+      body: externalFormData,
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    console.log('📥 External API response:', {
+      status: response.status,
+      statusText: response.statusText,
+      contentType: response.headers.get('content-type')
+    });
+
+    // Get the response text
+    const responseText = await response.text();
+    console.log('📝 Transcription result:', responseText);
+
+    if (!response.ok) {
+      console.error('❌ External API error:', response.status, responseText);
       return NextResponse.json({ 
-        error: 'Empty file',
+        text: 'Ошибка распознавания речи. Попробуйте еще раз.',
         success: false,
-        text: 'Аудио файл пустой'
-      }, { status: 400 });
+        error: responseText
+      }, { status: response.status });
     }
 
-    // Check if OpenAI API key is configured
-    if (!process.env.OPENAI_API_KEY) {
-      console.error('OpenAI API key not configured');
+    // Check if response is empty or just whitespace
+    if (!responseText || responseText.trim() === '') {
       return NextResponse.json({ 
-        text: 'OpenAI API ключ не настроен. Проверьте переменные окружения.',
-        success: false,
-        error: 'API key missing'
+        text: 'Речь не распознана. Попробуйте говорить громче и четче.',
+        success: false
       });
     }
 
-    // Convert and process audio file for OpenAI Whisper
-    let tempFilePath: string | undefined;
-    try {
-      // Determine proper file extension and type
-      let fileName = audioFile.name;
-      let mimeType = audioFile.type;
-      
-      // Handle different audio formats
-      if (fileName.endsWith('.m4a') || mimeType === 'audio/m4a') {
-        fileName = fileName.endsWith('.m4a') ? fileName : 'recording.m4a';
-        mimeType = 'audio/m4a';
-      } else if (fileName.endsWith('.webm') || mimeType.includes('webm')) {
-        fileName = fileName.endsWith('.webm') ? fileName : 'recording.webm';
-        mimeType = 'audio/webm';
-      } else if (fileName.endsWith('.wav') || mimeType === 'audio/wav') {
-        fileName = fileName.endsWith('.wav') ? fileName : 'recording.wav';
-        mimeType = 'audio/wav';
-      } else if (fileName.endsWith('.mp3') || mimeType === 'audio/mp3') {
-        fileName = fileName.endsWith('.mp3') ? fileName : 'recording.mp3';
-        mimeType = 'audio/mp3';
-      } else {
-        // Default to webm if unknown
-        fileName = 'recording.webm';
-        mimeType = 'audio/webm';
-      }
-      
-      // Convert File to buffer - OpenAI SDK handles the rest
-      const buffer = Buffer.from(await audioFile.arrayBuffer());
-      
-      // Save to temporary file for OpenAI SDK (Node.js doesn't have File constructor)
-      const tempDir = tmpdir();
-      const tempFilePath = path.join(tempDir, `audio_${Date.now()}_${fileName}`);
-      
-      console.log('💾 Writing temp file:', tempFilePath);
-      fs.writeFileSync(tempFilePath, buffer);
-      
-      // Create file-like object for OpenAI SDK (minimal approach)
-      const fileStream = fs.createReadStream(tempFilePath);
-      
-      // Add only the essential properties that OpenAI SDK needs
-      const fileObject = Object.assign(fileStream, {
-        name: fileName,
-        type: mimeType
-      });
-
-      console.log('✅ Sending to OpenAI Whisper:', {
-        fileName,
-        type: mimeType,
-        size: buffer.length,
-        tempFilePath,
-        fileObjectName: fileObject.name,
-        fileObjectType: fileObject.type
-      });
-      
-      console.log('📤 Making request to OpenAI Whisper...');
-      const transcription = await openai.audio.transcriptions.create({
-        file: fileObject as unknown as File, // Type assertion for Node.js ReadStream
-        model: 'whisper-1',
-        language: 'ru',
-        response_format: 'verbose_json',
-        temperature: 0.0,
-        prompt: 'Это запрос о медитации, йоге, практиках осознанности или здоровье.',
-      });
-
-      console.log('✅ Transcription successful:', {
-        text: transcription.text,
-        language: transcription.language,
-        duration: transcription.duration,
-        segments: transcription.segments?.length
-      });
-
-      const transcribedText = transcription.text || '';
-      const confidence = transcription.segments?.[0]?.avg_logprob || -1;
-      
-      // Clean up temp file
-      try {
-        fs.unlinkSync(tempFilePath);
-        console.log('🗑️ Temp file cleaned up:', tempFilePath);
-      } catch (cleanupError) {
-        console.warn('⚠️ Failed to cleanup temp file:', cleanupError);
-      }
-      
-      console.log('Transcription confidence:', confidence);
-      
-      if (!transcribedText || transcribedText.trim() === '') {
-        return NextResponse.json({ 
-          text: 'Речь не распознана. Попробуйте говорить громче и четче.',
-          success: false
-        });
-      }
-      
-      // Check for common hallucinations
-      const commonHallucinations = [
-        'спасибо за просмотр',
-        'спасибо за внимание',
-        'подписывайтесь на канал',
-        'like and subscribe',
-        'музыка',
-        'субтитры',
-        'переводчик',
-        'Thank you'
-      ];
-      
-      const isLikelyHallucination = commonHallucinations.some(phrase => 
-        transcribedText.toLowerCase().includes(phrase.toLowerCase())
-      );
-      
-      if (isLikelyHallucination || confidence < -0.8) {
-        return NextResponse.json({ 
-          text: 'Не удалось четко распознать речь. Попробуйте сказать еще раз более четко.',
-          success: false,
-          debug: { confidence, text: transcribedText }
-        });
-      }
-
-      return NextResponse.json({ 
-        text: transcribedText.trim(),
-        success: true,
-        confidence 
-      });
-
-    } catch (openaiError: unknown) {
-      // Clean up temp file in case of error
-      try {
-        if (tempFilePath && fs.existsSync(tempFilePath)) {
-          fs.unlinkSync(tempFilePath);
-          console.log('🗑️ Temp file cleaned up after error:', tempFilePath);
-        }
-      } catch (cleanupError) {
-        console.warn('⚠️ Failed to cleanup temp file after error:', cleanupError);
-      }
-      
-      const error = openaiError as OpenAIError;
-      console.error('OpenAI Whisper detailed error:', {
-        message: error.message,
-        type: error.type,
-        code: error.code,
-        status: error.status,
-        stack: error.stack
-      });
-      
-      let errorMessage = 'Ошибка распознавания речи.';
-      
-      if (error.code === 'invalid_api_key') {
-        errorMessage = 'Неверный API ключ OpenAI.';
-      } else if (error.code === 'insufficient_quota') {
-        errorMessage = 'Превышена квота OpenAI API.';
-      } else if (error.message?.includes('audio')) {
-        errorMessage = 'Неподдерживаемый формат аудио. Попробуйте еще раз.';
-      }
-      
-      return NextResponse.json({ 
-        text: errorMessage,
-        success: false,
-        error: error.message,
-        code: error.code
-      });
-    }
+    // Return the transcribed text
+    return NextResponse.json({ 
+      text: responseText.trim(),
+      success: true
+    });
 
   } catch (error: unknown) {
-    const generalError = error as Error;
-    console.error('Speech transcription general error:', error);
+    console.error('Speech API error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    
     return NextResponse.json(
       { 
         error: 'Failed to transcribe audio', 
-        details: generalError.message,
+        details: errorMessage,
         text: 'Общая ошибка сервера. Попробуйте позже.',
         success: false
       },
