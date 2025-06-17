@@ -9,21 +9,32 @@ export const ProfilePage = () => {
     const telegramUser = launchParams?.tgWebAppData?.user;
     const [isUpdatingAvatar, setIsUpdatingAvatar] = useState(false);
     
-    console.log('ProfilePage - LaunchParams:', launchParams);
-    console.log('ProfilePage - TelegramUser from launchParams:', telegramUser);
-    console.log('ProfilePage - User from DB:', user);
-    
     // Use data from launchParams if DB data not loaded yet
     const displayName = user?.first_name || telegramUser?.first_name || 'User';
     const displayLastName = user?.last_name || telegramUser?.last_name || '';
     const displayUsername = user?.username || telegramUser?.username;
     const displayTelegramId = user?.telegram_id || telegramUser?.id;
     const displayAvatarUrl = telegramUser?.photo_url || user?.photo_url;
+    
+    console.log('ProfilePage - LaunchParams:', launchParams);
+    console.log('ProfilePage - TelegramUser from launchParams:', telegramUser);
+    console.log('ProfilePage - User from DB:', user);
+    console.log('ProfilePage - Display Avatar URL:', displayAvatarUrl);
+    console.log('ProfilePage - Telegram photo_url:', telegramUser?.photo_url);
+    console.log('ProfilePage - DB photo_url:', user?.photo_url);
 
-    // Update avatar URL in Supabase when component mounts
+    // Update user data in Supabase when component mounts
     useEffect(() => {
-        const updateAvatarUrl = async () => {
-            if (telegramUser?.photo_url && telegramUser?.id && !isUpdatingAvatar) {
+        const updateUserData = async () => {
+            if (telegramUser?.id && !isUpdatingAvatar) {
+                console.log('Updating user data in Supabase:', {
+                    telegram_id: telegramUser.id,
+                    photo_url: telegramUser.photo_url,
+                    first_name: telegramUser.first_name,
+                    last_name: telegramUser.last_name,
+                    username: telegramUser.username
+                });
+                
                 setIsUpdatingAvatar(true);
                 try {
                     const response = await fetch(`/api/user/${telegramUser.id}`, {
@@ -39,21 +50,28 @@ export const ProfilePage = () => {
                         }),
                     });
                     
+                    console.log('User update response:', response.status);
+                    
                     if (!response.ok) {
-                        console.error('Failed to update user avatar');
+                        const errorData = await response.json();
+                        console.error('Failed to update user data:', errorData);
                     } else {
-                        console.log('Avatar URL updated successfully');
+                        const userData = await response.json();
+                        console.log('User data updated successfully:', userData);
                     }
                 } catch (error) {
-                    console.error('Error updating avatar:', error);
+                    console.error('Error updating user data:', error);
                 } finally {
                     setIsUpdatingAvatar(false);
                 }
             }
         };
 
-        updateAvatarUrl();
-    }, [telegramUser, isUpdatingAvatar]);
+        // Only run once when telegramUser is available
+        if (telegramUser?.id) {
+            updateUserData();
+        }
+    }, [telegramUser?.id]); // Only depend on telegram user ID
     
     return (
         <div className="min-h-screen bg-[#0A0A0F] pb-24">
@@ -73,11 +91,15 @@ export const ProfilePage = () => {
                                 alt={`${displayName}'s avatar`}
                                 className="w-full h-full rounded-full object-cover border-2 border-purple-500/50"
                                 onError={(e) => {
+                                    console.error('Avatar failed to load:', displayAvatarUrl);
                                     // Fallback to initials if image fails to load
                                     const target = e.target as HTMLImageElement;
                                     target.style.display = 'none';
                                     const fallback = target.nextElementSibling as HTMLElement;
                                     if (fallback) fallback.style.display = 'flex';
+                                }}
+                                onLoad={() => {
+                                    console.log('Avatar loaded successfully:', displayAvatarUrl);
                                 }}
                             />
                         ) : null}
