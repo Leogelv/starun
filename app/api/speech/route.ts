@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { OpenAIError } from '@/types/openai';
+import fs from 'fs';
+import path from 'path';
+import { tmpdir } from 'os';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -67,6 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Convert and process audio file for OpenAI Whisper
+    let tempFilePath: string | undefined;
     try {
       // Determine proper file extension and type
       let fileName = audioFile.name;
@@ -94,43 +98,31 @@ export async function POST(request: NextRequest) {
       // Convert File to buffer - OpenAI SDK handles the rest
       const buffer = Buffer.from(await audioFile.arrayBuffer());
       
-      // Create a proper File-like object that OpenAI SDK expects
-      // For Node.js compatibility, we need to create a File-like object manually
-      const fileObject = {
-        stream: () => new ReadableStream({
-          start(controller) {
-            controller.enqueue(buffer);
-            controller.close();
-          }
-        }),
-        arrayBuffer: () => Promise.resolve(buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)),
-        bytes: () => Promise.resolve(new Uint8Array(buffer)),
-        size: buffer.length,
-        type: mimeType,
-        name: fileName,
-        lastModified: Date.now(),
-        // Add other File interface properties
-        webkitRelativePath: '',
-        slice: (start?: number, end?: number, contentType?: string) => {
-          const sliced = buffer.slice(start, end);
-          return new Blob([sliced], { type: contentType || mimeType });
-        },
-        text: () => Promise.resolve(buffer.toString()),
-        [Symbol.toStringTag]: 'File'
-      } as unknown as File;
+      // Save to temporary file for OpenAI SDK (Node.js doesn't have File constructor)
+      const tempDir = tmpdir();
+      const tempFilePath = path.join(tempDir, `audio_${Date.now()}_${fileName}`);
+      
+      console.log('💾 Writing temp file:', tempFilePath);
+      fs.writeFileSync(tempFilePath, buffer);
+      
+      // Create file stream for OpenAI
+      const fileStream = fs.createReadStream(tempFilePath);
+      // Add required properties
+      (fileStream as unknown as { name: string }).name = fileName;
+      (fileStream as unknown as { type: string }).type = mimeType;
 
       console.log('✅ Sending to OpenAI Whisper:', {
         fileName,
         type: mimeType,
         size: buffer.length,
-        fileObjectName: (fileObject as unknown as { name: string }).name,
-        fileObjectSize: fileObject.size,
-        fileObjectType: fileObject.type
+        tempFilePath,
+        fileStreamName: (fileStream as unknown as { name: string }).name,
+        fileStreamType: (fileStream as unknown as { type: string }).type
       });
       
       console.log('📤 Making request to OpenAI Whisper...');
       const transcription = await openai.audio.transcriptions.create({
-        file: fileObject,
+        file: fileStream as unknown as File,
         model: 'whisper-1',
         language: 'ru',
         response_format: 'verbose_json',
@@ -147,6 +139,14 @@ export async function POST(request: NextRequest) {
 
       const transcribedText = transcription.text || '';
       const confidence = transcription.segments?.[0]?.avg_logprob || -1;
+      
+      // Clean up temp file
+      try {
+        fs.unlinkSync(tempFilePath);
+        console.log('🗑️ Temp file cleaned up:', tempFilePath);
+      } catch (cleanupError) {
+        console.warn('⚠️ Failed to cleanup temp file:', cleanupError);
+      }
       
       console.log('Transcription confidence:', confidence);
       
@@ -188,6 +188,16 @@ export async function POST(request: NextRequest) {
       });
 
     } catch (openaiError: unknown) {
+      // Clean up temp file in case of error
+      try {
+        if (tempFilePath && fs.existsSync(tempFilePath)) {
+          fs.unlinkSync(tempFilePath);
+          console.log('🗑️ Temp file cleaned up after error:', tempFilePath);
+        }
+      } catch (cleanupError) {
+        console.warn('⚠️ Failed to cleanup temp file after error:', cleanupError);
+      }
+      
       const error = openaiError as OpenAIError;
       console.error('OpenAI Whisper detailed error:', {
         message: error.message,
