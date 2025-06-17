@@ -25,14 +25,17 @@ export const upsertTgUser = async (payload: UpsertUserPayload) => {
         const response = await api.post(`/api/user`, payload);
         console.log('✅ API response:', response.status, response.data);
         return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
+        const isAxiosError = error && typeof error === 'object' && 'response' in error;
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        
         console.error('❌ API error details:', {
-            status: error.response?.status,
-            statusText: error.response?.statusText,
-            data: error.response?.data,
-            message: error.message,
-            url: error.config?.url,
-            method: error.config?.method
+            status: isAxiosError ? (error as any).response?.status : undefined,
+            statusText: isAxiosError ? (error as any).response?.statusText : undefined,
+            data: isAxiosError ? (error as any).response?.data : undefined,
+            message: errorMessage,
+            url: isAxiosError ? (error as any).config?.url : undefined,
+            method: isAxiosError ? (error as any).config?.method : undefined
         });
         throw error;
     }

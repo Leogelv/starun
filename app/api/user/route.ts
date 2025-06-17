@@ -42,12 +42,15 @@ export async function POST(request: Request) {
         console.log('✅ User upserted successfully:', data[0]);
         return NextResponse.json(data[0]);
         
-    } catch (error: any) {
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorStack = error instanceof Error ? error.stack : undefined;
+        
         console.error('❌ General error in POST /api/user:', error);
         return NextResponse.json({ 
             error: 'Internal server error',
-            message: error.message,
-            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            message: errorMessage,
+            stack: process.env.NODE_ENV === 'development' ? errorStack : undefined
         }, { status: 500 });
     }
 }
