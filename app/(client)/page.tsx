@@ -3,7 +3,7 @@ import {ChatPage} from "@/fsd/pages/client/ChatPage";
 
 export default function Page(){
     return(
-        <ClientPage>
+        <ClientPage hideMenuButton={true}>
             <ChatPage/>
         </ClientPage>
     )
