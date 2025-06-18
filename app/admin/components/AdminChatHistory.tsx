@@ -8,10 +8,14 @@ import { ChatStatsView } from './ChatStatsView';
 export const AdminChatHistory = () => {
   const [activeView, setActiveView] = useState<'sessions' | 'messages' | 'stats'>('sessions');
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
+  
+  console.log('AdminChatHistory: Current state - activeView:', activeView, 'selectedSession:', selectedSession);
 
   const handleSessionSelect = (sessionId: string) => {
+    console.log('AdminChatHistory: Selecting session:', sessionId);
     setSelectedSession(sessionId);
     setActiveView('messages');
+    console.log('AdminChatHistory: State updated - activeView: messages, selectedSession:', sessionId);
   };
 
   const handleBackToSessions = () => {
@@ -75,15 +79,24 @@ export const AdminChatHistory = () => {
 
       {/* Content */}
       {activeView === 'sessions' && !selectedSession && (
-        <ChatSessionsList onSessionSelect={handleSessionSelect} />
+        (() => {
+          console.log('AdminChatHistory: Rendering ChatSessionsList');
+          return <ChatSessionsList onSessionSelect={handleSessionSelect} />;
+        })()
       )}
       
       {activeView === 'messages' && selectedSession && (
-        <ChatMessagesView sessionId={selectedSession} onBack={handleBackToSessions} />
+        (() => {
+          console.log('AdminChatHistory: Rendering ChatMessagesView with sessionId:', selectedSession);
+          return <ChatMessagesView sessionId={selectedSession} onBack={handleBackToSessions} />;
+        })()
       )}
       
       {activeView === 'stats' && (
-        <ChatStatsView />
+        (() => {
+          console.log('AdminChatHistory: Rendering ChatStatsView');
+          return <ChatStatsView />;
+        })()
       )}
     </div>
   );

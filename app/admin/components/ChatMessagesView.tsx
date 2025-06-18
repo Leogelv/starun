@@ -30,29 +30,44 @@ interface ChatMessagesViewProps {
   onBack: () => void;
 }
 
-export const ChatMessagesView: React.FC<ChatMessagesViewProps> = ({ sessionId }) => {
+export const ChatMessagesView: React.FC<ChatMessagesViewProps> = ({ sessionId, onBack }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  
+  console.log('ChatMessagesView: Component rendered with sessionId:', sessionId);
 
   const fetchMessages = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/chat-history?session_id=${sessionId}&limit=1000`);
+      console.log('ChatMessagesView: Fetching messages for session:', sessionId);
+      const url = `/api/chat-history?session_id=${sessionId}&limit=1000`;
+      console.log('ChatMessagesView: Request URL:', url);
+      
+      const response = await fetch(url);
+      console.log('ChatMessagesView: Response status:', response.status, response.ok);
+      
       if (response.ok) {
         const data = await response.json();
+        console.log('ChatMessagesView: Response data:', data);
+        
         const sortedMessages = (data.data || []).sort((a: ChatMessage, b: ChatMessage) => 
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
+        console.log('ChatMessagesView: Sorted messages:', sortedMessages.length, 'items');
         setMessages(sortedMessages);
         
         // Set user info from first message
         if (sortedMessages.length > 0) {
           setUserInfo(sortedMessages[0].tg_users || null);
+          console.log('ChatMessagesView: User info set:', sortedMessages[0].tg_users);
         }
+      } else {
+        const errorText = await response.text();
+        console.error('ChatMessagesView: Response not ok:', errorText);
       }
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      console.error('ChatMessagesView: Error fetching messages:', error);
     } finally {
       setLoading(false);
     }
@@ -88,6 +103,16 @@ export const ChatMessagesView: React.FC<ChatMessagesViewProps> = ({ sessionId })
       <div className="glass rounded-2xl p-6 border border-arctic-light/20">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
+            <button
+              onClick={onBack}
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white hover:scale-105 transition-all border border-arctic-light/30 hover:border-arctic-light/50"
+              style={{ background: 'var(--smoky-cards)/20' }}
+              title="Назад к сессиям"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+            </button>
             <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold"
                  style={{ background: 'var(--gradient-accent)' }}>
               {userInfo?.first_name?.[0] || userInfo?.username?.[0] || 'U'}
