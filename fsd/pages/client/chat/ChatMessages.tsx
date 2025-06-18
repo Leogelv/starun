@@ -16,6 +16,7 @@ interface ChatMessagesProps {
   allMaterials?: any[];
   userAvatarUrl?: string;
   userName?: string;
+  messagesEndRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 export const ChatMessages: React.FC<ChatMessagesProps> = React.memo(({
@@ -23,10 +24,11 @@ export const ChatMessages: React.FC<ChatMessagesProps> = React.memo(({
   isLoading,
   allMaterials,
   userAvatarUrl,
-  userName
+  userName,
+  messagesEndRef
 }) => {
   return (
-    <div className="flex-1 overflow-y-auto px-4" style={{ paddingBottom: 'calc(160px + env(safe-area-inset-bottom))' }}>
+    <div className="flex-1 overflow-y-auto px-4 scroll-smooth will-change-scroll" style={{ paddingBottom: 'calc(160px + env(safe-area-inset-bottom))' }}>
       <div className="w-full max-w-lg mx-auto space-y-4">
         {messages.map((msg, idx) => (
           <div key={idx} className="space-y-3">
@@ -72,13 +74,16 @@ export const ChatMessages: React.FC<ChatMessagesProps> = React.memo(({
           <div className="flex justify-start">
             <div className="bg-white/10 backdrop-blur-lg px-4 py-3 rounded-2xl shadow-lg shadow-white/20">
               <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-blue-300 rounded-full animate-bounce shadow-sm shadow-blue-300/50"></div>
-                <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce shadow-sm shadow-blue-400/50" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-white rounded-full animate-bounce shadow-sm shadow-white/50" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-blue-300 rounded-full opacity-75"></div>
+                <div className="w-2 h-2 bg-blue-400 rounded-full opacity-75 animate-pulse"></div>
+                <div className="w-2 h-2 bg-white rounded-full opacity-75"></div>
               </div>
             </div>
           </div>
         )}
+        
+        {/* Invisible div for scroll anchor */}
+        <div ref={messagesEndRef} className="h-4" />
       </div>
     </div>
   );

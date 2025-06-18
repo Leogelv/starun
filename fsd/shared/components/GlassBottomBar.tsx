@@ -15,6 +15,8 @@ interface GlassBottomBarProps {
   onMessageChange?: (message: string) => void;
   onSendMessage?: () => void;
   isLoading?: boolean;
+  onInputFocus?: () => void;
+  onInputBlur?: () => void;
 }
 
 export const GlassBottomBar: React.FC<GlassBottomBarProps> = React.memo(({
@@ -24,7 +26,9 @@ export const GlassBottomBar: React.FC<GlassBottomBarProps> = React.memo(({
   message = '',
   onMessageChange,
   onSendMessage,
-  isLoading = false
+  isLoading = false,
+  onInputFocus,
+  onInputBlur
 }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -55,6 +59,8 @@ export const GlassBottomBar: React.FC<GlassBottomBarProps> = React.memo(({
           onSendMessage={onSendMessage || (() => {})}
           isLoading={isLoading}
           placeholder="Напишите ваш запрос..."
+          onFocus={onInputFocus}
+          onBlur={onInputBlur}
         />
       )}
 
@@ -120,29 +126,17 @@ export const GlassBottomBar: React.FC<GlassBottomBarProps> = React.memo(({
                 : '0 0 25px var(--electric-blue), 0 0 50px var(--electric-blue)/50'
             }}
           >
-            {/* Always visible animated circles */}
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-0"
-            >
+            {/* Static decorative circles - no continuous animation */}
+            <div className="absolute inset-0">
               <div className="absolute inset-2 rounded-full border border-arctic-light/15"></div>
-            </motion.div>
+            </div>
             
-            <motion.div
-              animate={{ rotate: -360 }}
-              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-0"
-            >
+            <div className="absolute inset-0">
               <div className="absolute inset-1 rounded-full border" style={{ borderStyle: 'dashed', borderColor: 'var(--cyan-neon)', opacity: 0.6 }}></div>
-            </motion.div>
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-0"
-            >
+            </div>
+            <div className="absolute inset-0">
               <div className="absolute inset-3 rounded-full border" style={{ borderStyle: 'dotted', borderColor: 'var(--star-glow)', opacity: 0.5 }}></div>
-            </motion.div>
+            </div>
             
             {/* Animated rings when recording */}
             {isRecording && (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { openLink } from '@telegram-apps/sdk-react';
 
 interface MaterialCardProps {
@@ -13,7 +13,7 @@ interface MaterialCardProps {
   compact?: boolean;
 }
 
-export const MaterialCard = ({ material, compact = false }: MaterialCardProps) => {
+export const MaterialCard = React.memo(({ material, compact = false }: MaterialCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
   const handleMaterialClick = (link: string) => {
@@ -76,4 +76,4 @@ export const MaterialCard = ({ material, compact = false }: MaterialCardProps) =
       )}
     </div>
   );
-};
+});

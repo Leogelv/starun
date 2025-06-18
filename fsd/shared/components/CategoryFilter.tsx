@@ -13,7 +13,7 @@ interface CategoryFilterProps {
   onSubtopicChange: (subtopicId: number | undefined) => void;
 }
 
-export const CategoryFilter: React.FC<CategoryFilterProps> = ({
+export const CategoryFilter: React.FC<CategoryFilterProps> = React.memo(({
   subtopics,
   activeSubtopic,
   onSubtopicChange
@@ -61,4 +61,4 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
       </div>
     </div>
   );
-};
+});

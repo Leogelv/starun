@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from 'react';
 import { hapticFeedback, useLaunchParams } from '@telegram-apps/sdk-react';
 import { useTelegramUser } from "@/fsd/app/providers/TelegramUser";
 import { useMaterials } from '@/fsd/entities/meditation/hooks/useMaterials';
@@ -28,12 +28,41 @@ export const ChatPage = () => {
   const { data: allMaterials } = useMaterials();
   const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
   const audioChunksRef = React.useRef<Blob[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [isInputFocused, setIsInputFocused] = useState(false);
   
   console.log('ChatPage - User from DB:', user);
   console.log('ChatPage - TelegramUser from launchParams:', telegramUser);
   console.log('ChatPage - Component rendered');
   console.log('ChatPage - Messages:', messages);
   console.log('ChatPage - Current message:', message);
+
+  // Auto-scroll to bottom when new messages arrive
+  const scrollToBottom = useCallback(() => {
+    if (messagesEndRef.current) {
+      requestAnimationFrame(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      });
+    }
+  }, []);
+
+  // Scroll to bottom when messages change or input is focused
+  useLayoutEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
+
+  // Handle keyboard visibility and scroll adjustments
+  useEffect(() => {
+    const handleResize = () => {
+      if (isInputFocused) {
+        setTimeout(scrollToBottom, 300);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isInputFocused, scrollToBottom]);
 
   // Log session creation
   useEffect(() => {
@@ -123,6 +152,9 @@ export const ChatPage = () => {
           content: 'Не удалось найти подходящие практики по вашему запросу. Попробуйте просмотреть каталог или спросить что-то другое.'
         }]);
       }
+      
+      // Auto-scroll after AI response
+      setTimeout(scrollToBottom, 100);
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { 
@@ -132,7 +164,7 @@ export const ChatPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [message, user, telegramUser, sessionId]);
+  }, [message, user, telegramUser, sessionId, scrollToBottom]);
 
   const toggleRecording = useCallback(async () => {
     hapticFeedback.impactOccurred('medium');
@@ -326,25 +358,38 @@ export const ChatPage = () => {
     }
   }, [setMessage, setIsLoading]);
 
+  // Handle input focus/blur for keyboard adjustments
+  const handleInputFocus = useCallback(() => {
+    setIsInputFocused(true);
+    setTimeout(scrollToBottom, 300);
+  }, [scrollToBottom]);
+
+  const handleInputBlur = useCallback(() => {
+    setIsInputFocused(false);
+  }, []);
+
   try {
     return (
-      <div className="fixed inset-0 overflow-hidden">
+      <div className="fixed inset-0 flex flex-col">
         {/* Background Components */}
         <ChatBackground />
 
         {/* UI overlay */}
-        <div className="relative z-10 h-full flex flex-col">
+        <div className="relative z-10 flex-1 flex flex-col min-h-0">
           {/* Header */}
           <ChatHeader />
 
-          {/* Messages */}
-          <ChatMessages 
-            messages={messages}
-            isLoading={isLoading}
-            allMaterials={allMaterials}
-            userAvatarUrl={useMemo(() => telegramUser?.photo_url || user?.photo_url || undefined, [telegramUser?.photo_url, user?.photo_url])}
-            userName={useMemo(() => telegramUser?.first_name || user?.first_name || undefined, [telegramUser?.first_name, user?.first_name])}
-          />
+          {/* Messages - with ref for container */}
+          <div ref={chatContainerRef} className="flex-1 min-h-0">
+            <ChatMessages 
+              messages={messages}
+              isLoading={isLoading}
+              allMaterials={allMaterials}
+              userAvatarUrl={useMemo(() => telegramUser?.photo_url || user?.photo_url || undefined, [telegramUser?.photo_url, user?.photo_url])}
+              userName={useMemo(() => telegramUser?.first_name || user?.first_name || undefined, [telegramUser?.first_name, user?.first_name])}
+              messagesEndRef={messagesEndRef}
+            />
+          </div>
 
           {/* Glass Bottom Bar */}
           <GlassBottomBar
@@ -355,6 +400,8 @@ export const ChatPage = () => {
             onMessageChange={setMessage}
             onSendMessage={handleSend}
             isLoading={isLoading}
+            onInputFocus={handleInputFocus}
+            onInputBlur={handleInputBlur}
           />
         </div>
       </div>

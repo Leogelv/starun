@@ -9,6 +9,8 @@ interface AdaptiveTextInputProps {
   onSendMessage: () => void;
   isLoading?: boolean;
   placeholder?: string;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 export const AdaptiveTextInput: React.FC<AdaptiveTextInputProps> = ({
@@ -16,7 +18,9 @@ export const AdaptiveTextInput: React.FC<AdaptiveTextInputProps> = ({
   onMessageChange,
   onSendMessage,
   isLoading = false,
-  placeholder = "Напишите ваш запрос..."
+  placeholder = "Напишите ваш запрос...",
+  onFocus,
+  onBlur
 }) => {
   const [inputHeight, setInputHeight] = useState(48);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -74,6 +78,8 @@ export const AdaptiveTextInput: React.FC<AdaptiveTextInputProps> = ({
                 }
               }}
               onInput={handleTextareaResize}
+              onFocus={onFocus}
+              onBlur={onBlur}
               placeholder={placeholder}
               rows={1}
               className="w-full bg-transparent px-5 py-3 pr-24 outline-none resize-none overflow-hidden font-inter placeholder-white/50"
