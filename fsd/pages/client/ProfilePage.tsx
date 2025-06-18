@@ -80,16 +80,22 @@ export const ProfilePage = () => {
                 <div className="text-center mb-8">
                     <div className="w-40 h-40 mx-auto mb-6 relative">
                         <div className="absolute inset-0 bg-gradient-accent rounded-full animate-pulse opacity-30 blur-xl"></div>
-                        <img 
-                            src={displayAvatarUrl || '/img/nophoto.png'} 
-                            alt={`${displayFullName}'s avatar`}
-                            className="relative w-full h-full rounded-full object-cover shadow-glow"
-                            onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = '/img/nophoto.png';
-                                target.onerror = null;
-                            }}
-                        />
+                        <div className="relative w-full h-full rounded-full overflow-hidden bg-gray-200 shadow-glow">
+                            <img 
+                                src={displayAvatarUrl && displayAvatarUrl.trim() !== '' ? displayAvatarUrl : '/img/nophoto.png'} 
+                                alt={`${displayFullName}'s avatar`}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = '/img/nophoto.png';
+                                    target.onerror = null;
+                                    console.log('Profile avatar failed to load, using fallback');
+                                }}
+                                onLoad={() => {
+                                    console.log('Profile avatar loaded successfully');
+                                }}
+                            />
+                        </div>
                         {isUpdatingAvatar && (
                             <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-accent rounded-full flex items-center justify-center shadow-glow-sm">
                                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -121,7 +127,7 @@ export const ProfilePage = () => {
                             
                             <div className="relative flex items-center justify-between">
                                 <div className="flex items-center gap-6">
-                                    <div className="w-20 h-20 rounded-xl overflow-hidden shadow-lg group-hover:shadow-purple-500/30 transition-shadow">
+                                    <div className="w-24 h-24 rounded-xl overflow-hidden shadow-lg group-hover:shadow-purple-500/30 transition-shadow">
                                         <img 
                                             src="/img/zalsozvezdii.png" 
                                             alt="Зал созвездий"
@@ -158,7 +164,7 @@ export const ProfilePage = () => {
                             
                             <div className="relative flex items-center justify-between">
                                 <div className="flex items-center gap-6">
-                                    <div className="w-20 h-20 rounded-xl overflow-hidden shadow-lg group-hover:shadow-blue-500/30 transition-shadow">
+                                    <div className="w-24 h-24 rounded-xl overflow-hidden shadow-lg group-hover:shadow-blue-500/30 transition-shadow">
                                         <img 
                                             src="/img/channelimage.png" 
                                             alt="Канал StarUnity"

@@ -39,15 +39,19 @@ export const ChatMessages: React.FC<ChatMessagesProps> = React.memo(({
                 <MarkdownMessage content={msg.content} className="text-sm" />
               </div>
               {msg.role === 'user' && (
-                <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 shadow-lg">
+                <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 shadow-lg bg-gray-200">
                   <img 
-                    src={userAvatarUrl || '/img/nophoto.png'} 
+                    src={userAvatarUrl && userAvatarUrl.trim() !== '' ? userAvatarUrl : '/img/nophoto.png'} 
                     alt={`${userName || 'User'}'s avatar`}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = '/img/nophoto.png';
                       target.onerror = null;
+                      console.log('Avatar failed to load, using fallback');
+                    }}
+                    onLoad={() => {
+                      console.log('Avatar loaded successfully');
                     }}
                   />
                 </div>
