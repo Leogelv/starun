@@ -18,17 +18,40 @@ export const useUpsertTgUser = (values: UpsertUserPayload) => {
                 queryClient.invalidateQueries({ queryKey: ["user"] });
                 
                 return result;
-            } catch (error) {
+            } catch (error: any) {
                 console.error('❌ upsertTgUser error:', error);
+                
+                // If it's a 404 or network error, don't retry aggressively
+                if (error?.response?.status === 404 || error?.code === 'NETWORK_ERROR') {
+                    console.warn('🚫 API endpoint not available, skipping user upsert');
+                    // Return a minimal user object to prevent infinite retries
+                    return {
+                        telegram_id: values.telegram_id,
+                        username: values.username,
+                        first_name: values.first_name,
+                        last_name: values.last_name,
+                        photo_url: values.photo_url
+                    } as TgUser;
+                }
+                
                 throw error;
             }
         },
         enabled: !!values.telegram_id && values.telegram_id > 0,
-        retry: (failureCount, error) => {
+        retry: (failureCount, error: any) => {
             console.log('🔄 Retry attempt:', failureCount, 'Error:', error);
-            return failureCount < 2; // Only retry once
+            
+            // Don't retry for 404 or network errors
+            if (error?.response?.status === 404 || error?.code === 'NETWORK_ERROR') {
+                console.warn('🚫 Not retrying for 404/network error');
+                return false;
+            }
+            
+            // Only retry once for other errors
+            return failureCount < 1;
         },
-        staleTime: 0, // Always consider data stale to refetch
-        gcTime: 0, // Don't cache for long
+        retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Exponential backoff
+        staleTime: 1000 * 60 * 5, // Consider data stale after 5 minutes
+        gcTime: 1000 * 60 * 10, // Keep in cache for 10 minutes
     });
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { hapticFeedback } from '@telegram-apps/sdk-react';
 import { useTelegramUser } from '@/fsd/app/providers/TelegramUser';
@@ -17,7 +17,7 @@ interface GlassBottomBarProps {
   isLoading?: boolean;
 }
 
-export const GlassBottomBar: React.FC<GlassBottomBarProps> = ({
+export const GlassBottomBar: React.FC<GlassBottomBarProps> = React.memo(({
   onMicrophoneClick,
   isRecording = false,
   showTextInput = false,
@@ -30,20 +30,20 @@ export const GlassBottomBar: React.FC<GlassBottomBarProps> = ({
   const pathname = usePathname();
   const { user } = useTelegramUser();
 
-  const handleNavigation = (path: string) => {
+  const handleNavigation = useCallback((path: string) => {
     hapticFeedback.impactOccurred('light');
     router.push(path);
-  };
+  }, [router]);
 
   // Определяем стиль фона в зависимости от страницы
   const isMainPage = pathname === '/';
-  const bottomBarStyle = isMainPage 
+  const bottomBarStyle = useMemo(() => isMainPage 
     ? { background: 'transparent' } // Полностью прозрачный на главной
     : {
         background: 'rgba(135, 164, 216, 0.08)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)'
-      };
+      }, [isMainPage]);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50">
@@ -238,4 +238,4 @@ export const GlassBottomBar: React.FC<GlassBottomBarProps> = ({
       </div>
     </div>
   );
-};
+});

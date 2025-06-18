@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { hapticFeedback, useLaunchParams } from '@telegram-apps/sdk-react';
 import { useTelegramUser } from "@/fsd/app/providers/TelegramUser";
 import { useMaterials } from '@/fsd/entities/meditation/hooks/useMaterials';
 import { GlassBottomBar } from '@/fsd/shared/components/GlassBottomBar';
+import { getApiBaseURL } from '@/fsd/shared/api';
 import { ChatBackground } from './chat/ChatBackground';
 import { ChatHeader } from './chat/ChatHeader';
 import { ChatMessages } from './chat/ChatMessages';
@@ -49,7 +50,7 @@ export const ChatPage = () => {
   }, []);
 
 
-  const handleSend = async () => {
+  const handleSend = useCallback(async () => {
     console.log('handleSend called with message:', message);
     if (!message.trim()) return;
 
@@ -61,7 +62,7 @@ export const ChatPage = () => {
     console.log('Sending message to API:', { userMessage, sessionId });
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch(`${getApiBaseURL()}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -131,9 +132,9 @@ export const ChatPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [message, user, telegramUser, sessionId]);
 
-  const toggleRecording = async () => {
+  const toggleRecording = useCallback(async () => {
     hapticFeedback.impactOccurred('medium');
     
     if (isRecording) {
@@ -232,9 +233,9 @@ export const ChatPage = () => {
         alert(errorMessage);
       }
     }
-  };
+  }, [isRecording]);
 
-  const transcribeAudio = async (audioBlob: Blob, mimeType: string) => {
+  const transcribeAudio = useCallback(async (audioBlob: Blob, mimeType: string) => {
     try {
       setIsLoading(true);
       
@@ -283,10 +284,10 @@ export const ChatPage = () => {
         method: 'POST',
         hasFormData: !!formData,
         contentType: 'multipart/form-data (automatic)',
-        url: '/api/speech'
+        url: `${getApiBaseURL()}/speech`
       });
       
-      const response = await fetch('/api/speech', {
+      const response = await fetch(`${getApiBaseURL()}/speech`, {
         method: 'POST',
         body: formData,
       });
@@ -323,7 +324,7 @@ export const ChatPage = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [setMessage, setIsLoading]);
 
   try {
     return (
@@ -341,6 +342,8 @@ export const ChatPage = () => {
             messages={messages}
             isLoading={isLoading}
             allMaterials={allMaterials}
+            userAvatarUrl={useMemo(() => telegramUser?.photo_url || user?.photo_url || undefined, [telegramUser?.photo_url, user?.photo_url])}
+            userName={useMemo(() => telegramUser?.first_name || user?.first_name || undefined, [telegramUser?.first_name, user?.first_name])}
           />
 
           {/* Glass Bottom Bar */}

@@ -4,6 +4,7 @@ import { useLaunchParams } from "@telegram-apps/sdk-react";
 import { useEffect, useState } from "react";
 import { hapticFeedback } from "@telegram-apps/sdk-react";
 import { GlassBottomBar } from '@/fsd/shared/components/GlassBottomBar';
+import { getApiBaseURL } from '@/fsd/shared/api';
 
 export const ProfilePage = () => {
     const { user } = useTelegramUser();
@@ -23,7 +24,7 @@ export const ProfilePage = () => {
             if (telegramUser?.id && !user && !isUpdatingAvatar) {
                 setIsUpdatingAvatar(true);
                 try {
-                    const response = await fetch(`/api/user/${telegramUser.id}`, {
+                    const response = await fetch(`${getApiBaseURL()}/user/${telegramUser.id}`, {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json',
@@ -77,26 +78,16 @@ export const ProfilePage = () => {
                 <div className="text-center mb-8">
                     <div className="w-32 h-32 mx-auto mb-6 relative">
                         <div className="absolute inset-0 bg-gradient-accent rounded-full animate-pulse opacity-30 blur-xl"></div>
-                        {displayAvatarUrl ? (
-                            <img 
-                                src={displayAvatarUrl} 
-                                alt={`${displayName}'s avatar`}
-                                className="relative w-full h-full rounded-full object-cover shadow-glow"
-                                onError={(e) => {
-                                    const target = e.target as HTMLImageElement;
-                                    target.style.display = 'none';
-                                    const fallback = target.nextElementSibling as HTMLElement;
-                                    if (fallback) fallback.style.display = 'flex';
-                                }}
-                            />
-                        ) : null}
-                        <div 
-                            className={`${displayAvatarUrl ? 'hidden' : 'flex'} relative w-full h-full bg-gradient-accent rounded-full items-center justify-center shadow-glow`}
-                        >
-                            <span className="text-5xl text-white font-bold font-unbounded">
-                                {displayName[0]?.toUpperCase() || 'U'}
-                            </span>
-                        </div>
+                        <img 
+                            src={displayAvatarUrl || '/img/nophoto.png'} 
+                            alt={`${displayName}'s avatar`}
+                            className="relative w-full h-full rounded-full object-cover shadow-glow"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.src = '/img/nophoto.png';
+                                target.onerror = null;
+                            }}
+                        />
                         {isUpdatingAvatar && (
                             <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-accent rounded-full flex items-center justify-center shadow-glow-sm">
                                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

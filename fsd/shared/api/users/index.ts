@@ -9,12 +9,12 @@ export interface UpsertUserPayload {
 }
 
 export const fetchTgUser = async (telegramId?: number) => {
-    const response = await api.get(`/api/user/${telegramId}`);
+    const response = await api.get(`/user/${telegramId}`);
     return response.data;
 };
 
 export const upsertTgUser = async (payload: UpsertUserPayload) => {
-    console.log('📤 API call: POST /api/user with payload:', payload);
+    console.log('📤 API call: POST /user with payload:', payload);
     
     if (!payload.telegram_id || payload.telegram_id <= 0) {
         console.error('❌ Invalid telegram_id:', payload.telegram_id);
@@ -22,7 +22,7 @@ export const upsertTgUser = async (payload: UpsertUserPayload) => {
     }
     
     try {
-        const response = await api.post(`/api/user`, payload);
+        const response = await api.post(`/user`, payload);
         console.log('✅ API response:', response.status, response.data);
         return response.data;
     } catch (error: unknown) {
