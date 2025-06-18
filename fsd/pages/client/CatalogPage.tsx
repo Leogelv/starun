@@ -184,8 +184,21 @@ export const CatalogPage = () => {
       {/* Background Layer - z-0 */}
       <div className="fixed inset-0 bg-gradient-to-b from-blue-950/40 via-blue-900/50 to-blue-950/60 z-0"></div>
       
-      {/* Background effects - z-1 */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-1 opacity-30">
+      {/* Video background - z-1 */}
+      <video 
+        className="fixed inset-0 w-full h-full object-cover opacity-20 z-1"
+        autoPlay
+        loop
+        muted
+        playsInline
+      >
+        <source src="/video/bg_chat.MOV" type="video/quicktime" />
+        <source src="/video/bg_chat.mp4" type="video/mp4" />
+        <source src="/video/bg_chat.webm" type="video/webm" />
+      </video>
+      
+      {/* Background effects - z-2 */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-2 opacity-30">
         <div className="absolute top-20 -left-32 w-64 h-64 bg-blue-600/20 rounded-full blur-[100px]"></div>
         <div className="absolute top-96 -right-32 w-96 h-96 bg-blue-400/15 rounded-full blur-[120px]"></div>
         <div className="absolute bottom-40 left-1/2 -translate-x-1/2 w-80 h-80 bg-blue-500/10 rounded-full blur-[100px]"></div>
