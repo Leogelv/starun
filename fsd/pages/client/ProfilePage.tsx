@@ -13,7 +13,9 @@ export const ProfilePage = () => {
     const [isUpdatingAvatar, setIsUpdatingAvatar] = useState(false);
     
     // Use data from launchParams if DB data not loaded yet
-    const displayName = user?.first_name || telegramUser?.first_name || 'User';
+    const displayFirstName = user?.first_name || telegramUser?.first_name || '';
+    const displayLastName = user?.last_name || telegramUser?.last_name || '';
+    const displayFullName = `${displayFirstName} ${displayLastName}`.trim() || 'User';
     const displayUsername = user?.username || telegramUser?.username;
     const displayTelegramId = user?.telegram_id || telegramUser?.id;
     const displayAvatarUrl = telegramUser?.photo_url || user?.photo_url;
@@ -74,13 +76,13 @@ export const ProfilePage = () => {
             </div>
 
             <div className="relative z-10 px-4 pb-4" style={{ paddingTop: 'max(95px, env(safe-area-inset-top))' }}>
-                {/* Profile header - minimal design */}
+                {/* Profile header - improved design */}
                 <div className="text-center mb-8">
-                    <div className="w-32 h-32 mx-auto mb-6 relative">
+                    <div className="w-40 h-40 mx-auto mb-6 relative">
                         <div className="absolute inset-0 bg-gradient-accent rounded-full animate-pulse opacity-30 blur-xl"></div>
                         <img 
                             src={displayAvatarUrl || '/img/nophoto.png'} 
-                            alt={`${displayName}'s avatar`}
+                            alt={`${displayFullName}'s avatar`}
                             className="relative w-full h-full rounded-full object-cover shadow-glow"
                             onError={(e) => {
                                 const target = e.target as HTMLImageElement;
@@ -95,15 +97,17 @@ export const ProfilePage = () => {
                         )}
                     </div>
                     
+                    <h1 className="text-white text-2xl font-bold mb-2 font-poppins">{displayFullName}</h1>
+                    
                     {displayUsername && (
-                        <p className="text-green-300 text-lg font-medium mb-2 font-poppins">@{displayUsername}</p>
+                        <p className="text-blue-300 text-lg font-medium mb-2 font-poppins">@{displayUsername}</p>
                     )}
                     
                     <p className="text-white/60 text-sm font-mono">ID: {displayTelegramId || 'Unknown'}</p>
                 </div>
 
                 {/* Channel buttons with new images and cosmic theme */}
-                <div className="space-y-4 max-w-sm mx-auto">
+                <div className="space-y-6 max-w-md mx-auto">
                     {/* Зал Созвездий */}
                     <a 
                         href="https://t.me/+CgWZpf-8DVUwY2Qy"
@@ -112,12 +116,12 @@ export const ProfilePage = () => {
                         onClick={() => hapticFeedback.impactOccurred('medium')}
                         className="block relative overflow-hidden group"
                     >
-                        <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/30">
+                        <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-8 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/30">
                             <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             
                             <div className="relative flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 rounded-xl overflow-hidden shadow-lg group-hover:shadow-purple-500/30 transition-shadow">
+                                <div className="flex items-center gap-6">
+                                    <div className="w-20 h-20 rounded-xl overflow-hidden shadow-lg group-hover:shadow-purple-500/30 transition-shadow">
                                         <img 
                                             src="/img/zalsozvezdii.png" 
                                             alt="Зал созвездий"
@@ -125,8 +129,8 @@ export const ProfilePage = () => {
                                         />
                                     </div>
                                     <div>
-                                        <h3 className="text-white text-lg font-semibold mb-1 font-poppins">Зал Созвездий</h3>
-                                        <p className="text-purple-300 text-sm">пространство StarЮнитцев</p>
+                                        <h3 className="text-white text-xl font-semibold mb-2 font-poppins">Зал Созвездий</h3>
+                                        <p className="text-purple-300 text-base">пространство StarЮнитцев</p>
                                     </div>
                                 </div>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-purple-400 transform group-hover:translate-x-1 transition-transform">
@@ -149,12 +153,12 @@ export const ProfilePage = () => {
                         onClick={() => hapticFeedback.impactOccurred('medium')}
                         className="block relative overflow-hidden group"
                     >
-                        <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-6 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-blue-500/30">
+                        <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-8 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-blue-500/30">
                             <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             
                             <div className="relative flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 rounded-xl overflow-hidden shadow-lg group-hover:shadow-blue-500/30 transition-shadow">
+                                <div className="flex items-center gap-6">
+                                    <div className="w-20 h-20 rounded-xl overflow-hidden shadow-lg group-hover:shadow-blue-500/30 transition-shadow">
                                         <img 
                                             src="/img/channelimage.png" 
                                             alt="Канал StarUnity"
@@ -162,8 +166,8 @@ export const ProfilePage = () => {
                                         />
                                     </div>
                                     <div>
-                                        <h3 className="text-white text-lg font-semibold mb-1 font-poppins">Канал StarUnity</h3>
-                                        <p className="text-blue-300 text-sm">пульс вселенной</p>
+                                        <h3 className="text-white text-xl font-semibold mb-2 font-poppins">Канал StarUnity</h3>
+                                        <p className="text-blue-300 text-base">пульс вселенной</p>
                                     </div>
                                 </div>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-blue-400 transform group-hover:translate-x-1 transition-transform">

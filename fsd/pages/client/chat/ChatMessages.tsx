@@ -31,28 +31,6 @@ export const ChatMessages: React.FC<ChatMessagesProps> = React.memo(({
         {messages.map((msg, idx) => (
           <div key={idx} className="space-y-3">
             <div className={`flex items-end gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              {msg.role === 'user' && (
-                <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 shadow-lg">
-                  {userAvatarUrl ? (
-                    <img 
-                      src={userAvatarUrl} 
-                      alt={`${userName || 'User'}'s avatar`}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/img/nophoto.png';
-                        target.onerror = null;
-                      }}
-                    />
-                  ) : (
-                    <img 
-                      src="/img/nophoto.png" 
-                      alt="Default avatar"
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                </div>
-              )}
               <div className={`max-w-[80%] px-4 py-3 rounded-2xl backdrop-blur-lg ${
                 msg.role === 'user' 
                   ? 'bg-gradient-sky text-white shadow-lg shadow-blue-500/20' 
@@ -60,6 +38,20 @@ export const ChatMessages: React.FC<ChatMessagesProps> = React.memo(({
               }`}>
                 <MarkdownMessage content={msg.content} className="text-sm" />
               </div>
+              {msg.role === 'user' && (
+                <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 shadow-lg">
+                  <img 
+                    src={userAvatarUrl || '/img/nophoto.png'} 
+                    alt={`${userName || 'User'}'s avatar`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/img/nophoto.png';
+                      target.onerror = null;
+                    }}
+                  />
+                </div>
+              )}
             </div>
             
             {/* Material cards carousel */}
