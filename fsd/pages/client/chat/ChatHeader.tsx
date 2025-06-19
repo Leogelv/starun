@@ -5,7 +5,7 @@ import React from 'react';
 export const ChatHeader: React.FC = () => {
   return (
     <div 
-      className="w-full bg-gradient-to-b from-blue-950/80 via-blue-950/40 to-transparent" 
+      className="w-full bg-blue-950/20 backdrop-blur-xl border-b border-white/10" 
       style={{ 
         paddingTop: 'calc(env(safe-area-inset-top) + 80px)',
         paddingBottom: '20px'
