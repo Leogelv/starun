@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+interface ChatMessage {
+  id: number;
+  telegram_id: number;
+  message_type: 'user' | 'assistant';
+  content: string;
+  material_ids?: number[];
+  session_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
 const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
@@ -30,7 +41,7 @@ export async function GET(
       session_id: string;
       telegram_id: number;
       created_at: string;
-      messages: any[];
+      messages: ChatMessage[];
     }>();
     
     messages?.forEach(msg => {
@@ -52,7 +63,7 @@ export async function GET(
     // Convert to array and sort messages within each session
     const sessionsWithMessages = Array.from(sessionMap.values()).map(session => ({
       ...session,
-      messages: session.messages.sort((a: any, b: any) => 
+      messages: session.messages.sort((a: ChatMessage, b: ChatMessage) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       )
     }));
