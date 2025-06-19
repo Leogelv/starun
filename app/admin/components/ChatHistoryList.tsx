@@ -12,6 +12,13 @@ interface ChatMessage {
   session_id: string;
   created_at: string;
   updated_at: string;
+  tg_users?: {
+    telegram_id: number;
+    username?: string;
+    first_name?: string;
+    last_name?: string;
+    photo_url?: string;
+  };
 }
 
 
@@ -139,20 +146,44 @@ export const ChatHistoryList = () => {
 
       {/* Users with Sessions */}
       <div className="space-y-6">
-        {Object.entries(groupedData).map(([telegramId, userSessions]) => (
-          <div key={telegramId} className="glass rounded-2xl border border-arctic-light/20 p-6">
-            {/* User Header */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-gradient-accent flex items-center justify-center text-white font-bold">
-                U{telegramId}
+        {Object.entries(groupedData).map(([telegramId, userSessions]) => {
+          // Get user info from first message with user data
+          const firstMessageWithUser = Array.from(userSessions.values()).flat().find(msg => msg.tg_users);
+          const userInfo = firstMessageWithUser?.tg_users;
+          
+          return (
+            <div key={telegramId} className="glass rounded-2xl border border-arctic-light/20 p-6">
+              {/* User Header */}
+              <div className="flex items-center gap-4 mb-6">
+                {/* Avatar */}
+                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                  <img 
+                    src={userInfo?.photo_url || '/img/nophoto.png'} 
+                    alt={userInfo?.first_name || 'User'}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/img/nophoto.png';
+                    }}
+                  />
+                </div>
+                
+                {/* User Info */}
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold text-white">
+                    {userInfo?.first_name || 'Unknown'} {userInfo?.last_name || ''}
+                  </h3>
+                  <div className="flex items-center gap-3 text-sm text-white/60">
+                    {userInfo?.username && (
+                      <span>@{userInfo.username}</span>
+                    )}
+                    <span>ID: {telegramId}</span>
+                  </div>
+                  <p className="text-sm text-white/50 mt-1">
+                    {userSessions.size} {userSessions.size === 1 ? 'сессия' : 'сессий'} • {Array.from(userSessions.values()).flat().length} сообщений
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-white">User {telegramId}</h3>
-                <p className="text-sm text-white/60">
-                  {userSessions.size} {userSessions.size === 1 ? 'сессия' : 'сессий'} • {Array.from(userSessions.values()).flat().length} сообщений
-                </p>
-              </div>
-            </div>
 
             {/* Horizontal Scroll Sessions */}
             <div className="overflow-x-auto -mx-6 px-6">
@@ -166,8 +197,8 @@ export const ChatHistoryList = () => {
                   return (
                     <div
                       key={sessionId}
-                      className="bg-white/5 rounded-xl p-4 flex-shrink-0 hover:bg-white/10 transition-all cursor-pointer relative"
-                      style={{ width: '300px' }}
+                      className="bg-white/5 rounded-xl p-4 flex-shrink-0 hover:bg-white/10 transition-all cursor-pointer relative border border-white/5 hover:border-white/10"
+                      style={{ width: '320px' }}
                       onClick={() => setSelectedSession({ sessionId, telegramId: parseInt(telegramId), messages: sortedMessages })}
                     >
                       {/* Delete Button */}
@@ -176,7 +207,7 @@ export const ChatHistoryList = () => {
                           e.stopPropagation();
                           deleteSession(sessionId);
                         }}
-                        className="absolute top-2 right-2 w-8 h-8 rounded-full bg-red-500/20 hover:bg-red-500/40 flex items-center justify-center transition-all"
+                        className="absolute top-3 right-3 w-8 h-8 rounded-full bg-red-500/20 hover:bg-red-500/40 flex items-center justify-center transition-all opacity-60 hover:opacity-100"
                       >
                         <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -185,8 +216,10 @@ export const ChatHistoryList = () => {
 
                       {/* Session Header */}
                       <div className="mb-3">
-                        <p className="text-xs text-white/40 mb-1">Session ID</p>
-                        <p className="text-xs text-white/60 font-mono truncate">{sessionId}</p>
+                        <p className="text-xs text-white/40 mb-1">ID сессии</p>
+                        <p className="text-xs text-white/60 font-mono truncate" title={sessionId}>
+                          {sessionId.slice(0, 8)}...{sessionId.slice(-4)}
+                        </p>
                       </div>
 
                       {/* First Message Preview */}
@@ -207,19 +240,21 @@ export const ChatHistoryList = () => {
                       </div>
 
                       {/* Messages Preview */}
-                      <div className="mt-3 space-y-2 max-h-32 overflow-y-auto">
+                      <div className="mt-3 space-y-2 max-h-28 overflow-y-auto scrollbar-hide">
                         {sortedMessages.slice(0, 3).map((msg) => (
-                          <div key={msg.id} className="text-xs">
-                            <span className={msg.message_type === 'user' ? 'text-blue-400' : 'text-green-400'}>
+                          <div key={msg.id} className="flex items-start gap-2">
+                            <span className={`text-xs flex-shrink-0 ${msg.message_type === 'user' ? 'text-blue-400' : 'text-green-400'}`}>
                               {msg.message_type === 'user' ? '👤' : '🤖'}
                             </span>
-                            <span className="text-white/60 ml-1 line-clamp-1">
+                            <span className="text-white/60 text-xs line-clamp-2 leading-relaxed">
                               {msg.content}
                             </span>
                           </div>
                         ))}
                         {sortedMessages.length > 3 && (
-                          <div className="text-xs text-white/40">+{sortedMessages.length - 3} еще...</div>
+                          <div className="text-xs text-white/40 text-center pt-1">
+                            +{sortedMessages.length - 3} сообщений...
+                          </div>
                         )}
                       </div>
                     </div>
@@ -228,7 +263,8 @@ export const ChatHistoryList = () => {
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {messages.length === 0 && !loading && (

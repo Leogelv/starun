@@ -12,6 +12,13 @@ interface ChatMessage {
   session_id: string;
   created_at: string;
   updated_at: string;
+  tg_users?: {
+    telegram_id: number;
+    username?: string;
+    first_name?: string;
+    last_name?: string;
+    photo_url?: string;
+  };
 }
 
 interface MessageModalProps {

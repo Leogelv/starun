@@ -10,7 +10,16 @@ export async function GET(request: Request) {
     
     let query = supabaseServer
       .from('chat_history')
-      .select('*')
+      .select(`
+        *,
+        tg_users!chat_history_telegram_id_fkey (
+          telegram_id,
+          username,
+          first_name,
+          last_name,
+          photo_url
+        )
+      `)
       .order('created_at', { ascending: false })
       .limit(limit);
     
