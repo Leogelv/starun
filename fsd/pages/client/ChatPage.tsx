@@ -401,44 +401,43 @@ export const ChatPage = () => {
 
   try {
     return (
-      <div className="h-screen flex flex-col overflow-hidden relative">
-        {/* Fixed Background */}
+      <div className="h-screen overflow-hidden relative">
+        {/* Fixed Background - lowest layer */}
         <div className="fixed inset-0 z-0">
           <ChatBackground />
         </div>
 
-        {/* Main content */}
-        <div className="relative z-10 flex flex-col h-full">
-          {/* Fixed Header with History Icon */}
-          <div className="fixed top-0 left-0 right-0 z-20">
-            <ChatHeader />
-            <ChatHistoryPopup onSessionSelect={handleSessionSelect} />
-          </div>
+        {/* Fixed Header with gradient - middle layer */}
+        <div className="fixed top-0 left-0 right-0 z-30">
+          <ChatHeader />
+        </div>
 
-          {/* Messages with proper spacing for fixed header */}
-          <div className="flex-1 overflow-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 120px)', paddingBottom: '100px' }}>
-            <ChatMessages 
-              messages={messages}
-              isLoading={isLoading}
-              allMaterials={allMaterials}
-              userAvatarUrl={useMemo(() => telegramUser?.photo_url || user?.photo_url || undefined, [telegramUser?.photo_url, user?.photo_url])}
-              userName={useMemo(() => telegramUser?.first_name || user?.first_name || undefined, [telegramUser?.first_name, user?.first_name])}
-              messagesEndRef={messagesEndRef}
-            />
-          </div>
+        {/* History button - highest UI layer */}
+        <ChatHistoryPopup onSessionSelect={handleSessionSelect} />
 
-          {/* Fixed Glass Bottom Bar */}
-          <div className="fixed bottom-0 left-0 right-0 z-20">
-            <GlassBottomBar
-              onMicrophoneClick={toggleRecording}
-              isRecording={isRecording}
-              showTextInput={true}
-              message={message}
-              onMessageChange={setMessage}
-              onSendMessage={handleSend}
-              isLoading={isLoading}
-            />
-          </div>
+        {/* Scrollable Messages - in between layers */}
+        <div className="absolute inset-0 z-20 overflow-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 150px)', paddingBottom: '100px' }}>
+          <ChatMessages 
+            messages={messages}
+            isLoading={isLoading}
+            allMaterials={allMaterials}
+            userAvatarUrl={useMemo(() => telegramUser?.photo_url || user?.photo_url || undefined, [telegramUser?.photo_url, user?.photo_url])}
+            userName={useMemo(() => telegramUser?.first_name || user?.first_name || undefined, [telegramUser?.first_name, user?.first_name])}
+            messagesEndRef={messagesEndRef}
+          />
+        </div>
+
+        {/* Fixed Glass Bottom Bar - high layer */}
+        <div className="fixed bottom-0 left-0 right-0 z-40">
+          <GlassBottomBar
+            onMicrophoneClick={toggleRecording}
+            isRecording={isRecording}
+            showTextInput={true}
+            message={message}
+            onMessageChange={setMessage}
+            onSendMessage={handleSend}
+            isLoading={isLoading}
+          />
         </div>
       </div>
     );
