@@ -22,6 +22,7 @@ export const ChatPage = () => {
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string, materialIds?: number[], isInitial?: boolean }[]>([]);
   const [lastMessageTime, setLastMessageTime] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const { data: allMaterials } = useMaterials();
   const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
   const audioChunksRef = React.useRef<Blob[]>([]);
@@ -40,10 +41,16 @@ export const ChatPage = () => {
     }
   }, []);
 
-  // Handle input focus - scroll to bottom
+  // Handle input focus - scroll to bottom and show overlay
   const handleInputFocus = useCallback(() => {
+    setIsInputFocused(true);
     scrollToBottom();
   }, [scrollToBottom]);
+
+  // Handle input blur - hide overlay
+  const handleInputBlur = useCallback(() => {
+    setIsInputFocused(false);
+  }, []);
 
   // Initialize new session if needed
   useEffect(() => {
@@ -488,6 +495,20 @@ export const ChatPage = () => {
               />
             </div>
           </div>
+
+          {/* Glassmorphism overlay when input is focused - only on mobile */}
+          {isInputFocused && (
+            <div 
+              className="absolute bottom-0 left-0 right-0 pointer-events-none transition-all duration-1000 sm:hidden"
+              style={{
+                height: '180px',
+                background: 'linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                opacity: isInputFocused ? 1 : 0,
+              }}
+            />
+          )}
         </div>
 
         {/* Bottom Bar - фиксированная высота */}
@@ -501,6 +522,7 @@ export const ChatPage = () => {
             onSendMessage={handleSend}
             isLoading={isLoading}
             onInputFocus={handleInputFocus}
+            onInputBlur={handleInputBlur}
           />
         </div>
       </div>

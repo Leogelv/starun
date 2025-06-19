@@ -63,11 +63,19 @@ export const AdaptiveTextInput: React.FC<AdaptiveTextInputProps> = ({
         className="px-4 pb-2"
       >
         <div className="max-w-lg mx-auto">
-          <div className="relative backdrop-blur-lg rounded-3xl p-1 shadow-lg" style={{
-            background: 'var(--smoky-cards)/10',
-            boxShadow: '0 8px 25px var(--lunar-white)/10'
-          }}>
-            <textarea
+          <div className="relative rounded-3xl p-1 shadow-lg">
+            {/* Внешний слой для glass эффекта */}
+            <div 
+              className="absolute inset-0 rounded-3xl backdrop-blur-lg"
+              style={{
+                background: 'var(--smoky-cards)/10',
+                boxShadow: '0 8px 25px var(--lunar-white)/10'
+              }}
+            />
+            
+            {/* Внутренний контейнер для textarea */}
+            <div className="relative">
+              <textarea
               ref={textareaRef}
               value={message}
               onChange={(e) => onMessageChange(e.target.value)}
@@ -91,12 +99,13 @@ export const AdaptiveTextInput: React.FC<AdaptiveTextInputProps> = ({
               }}
               disabled={isLoading}
             />
+            </div>
             
             {/* Expand button */}
             {inputHeight >= 120 && (
               <button
                 onClick={handleExpand}
-                className="absolute right-16 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                className="absolute z-20 right-16 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
                 style={{ background: 'var(--smoky-cards)/30' }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
@@ -109,7 +118,7 @@ export const AdaptiveTextInput: React.FC<AdaptiveTextInputProps> = ({
             <button
               onClick={handleSend}
               disabled={!message?.trim() || isLoading}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center disabled:opacity-50 transition-all hover:scale-105 disabled:hover:scale-100 group overflow-hidden shadow-lg"
+              className="absolute z-20 right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center disabled:opacity-50 transition-all hover:scale-105 disabled:hover:scale-100 group overflow-hidden shadow-lg"
               style={{ background: 'var(--gradient-accent)' }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">

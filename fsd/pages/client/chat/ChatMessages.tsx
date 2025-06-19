@@ -31,7 +31,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = React.memo(({
 }) => {
   return (
     <div className="h-full w-full">
-      <div className="w-full max-w-lg mx-auto space-y-4 pt-4 pb-8">
+      <div className="w-full max-w-lg mx-auto space-y-4 pt-4 pb-[300px]">
         {messages.map((msg, idx) => (
           <div key={idx} className="space-y-3">
             <div className={`flex items-end gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
