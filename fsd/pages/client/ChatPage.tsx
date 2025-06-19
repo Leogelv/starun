@@ -415,8 +415,11 @@ export const ChatPage = () => {
         {/* History button - highest UI layer */}
         <ChatHistoryPopup onSessionSelect={handleSessionSelect} />
 
-        {/* Scrollable Messages - in between layers */}
+        {/* Scrollable Messages with fade effect - in between layers */}
         <div className="absolute inset-0 z-20 overflow-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 150px)', paddingBottom: '100px' }}>
+          {/* Top fade overlay */}
+          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-blue-950/90 to-transparent pointer-events-none z-30" style={{ marginTop: 'calc(env(safe-area-inset-top) + 150px)' }} />
+          
           <ChatMessages 
             messages={messages}
             isLoading={isLoading}
@@ -425,6 +428,9 @@ export const ChatPage = () => {
             userName={useMemo(() => telegramUser?.first_name || user?.first_name || undefined, [telegramUser?.first_name, user?.first_name])}
             messagesEndRef={messagesEndRef}
           />
+          
+          {/* Bottom fade overlay */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-blue-950/90 to-transparent pointer-events-none z-30" style={{ marginBottom: '100px' }} />
         </div>
 
         {/* Fixed Glass Bottom Bar - high layer */}
