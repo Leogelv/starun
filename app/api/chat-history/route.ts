@@ -10,16 +10,7 @@ export async function GET(request: Request) {
     
     let query = supabaseServer
       .from('chat_history')
-      .select(`
-        *,
-        tg_users!chat_history_telegram_id_fkey (
-          telegram_id,
-          username,
-          first_name,
-          last_name,
-          photo_url
-        )
-      `)
+      .select('*')
       .order('created_at', { ascending: false })
       .limit(limit);
     
@@ -31,11 +22,35 @@ export async function GET(request: Request) {
       query = query.eq('telegram_id', telegramId);
     }
     
-    const { data, error } = await query;
+    const { data: messages, error } = await query;
     
     if (error) throw error;
     
-    return NextResponse.json(data || []);
+    // Get unique user IDs
+    const userIds = [...new Set((messages || []).map(msg => msg.telegram_id))];
+    
+    // Fetch user info
+    if (userIds.length > 0) {
+      const { data: users } = await supabaseServer
+        .from('tg_users')
+        .select('telegram_id, username, first_name, last_name, photo_url')
+        .in('telegram_id', userIds);
+      
+      // Merge user info with messages
+      const userMap = new Map();
+      users?.forEach(user => {
+        userMap.set(user.telegram_id, user);
+      });
+      
+      const messagesWithUsers = (messages || []).map(msg => ({
+        ...msg,
+        tg_users: userMap.get(msg.telegram_id) || null
+      }));
+      
+      return NextResponse.json(messagesWithUsers);
+    }
+    
+    return NextResponse.json(messages || []);
   } catch (error) {
     console.error('Error fetching chat history:', error);
     return NextResponse.json(
