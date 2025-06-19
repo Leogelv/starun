@@ -133,11 +133,13 @@ export const ChatHistoryPopup: React.FC<ChatHistoryPopupProps> = ({ onSessionSel
 
   return (
     <>
-      {/* History Icon Button - Centered */}
+      {/* History Icon Button - Centered with proper top padding */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="absolute top-6 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-lg flex items-center justify-center transition-all hover:scale-110 hover:bg-white/20 z-30"
-        style={{ marginTop: 'env(safe-area-inset-top)' }}
+        className="absolute left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-lg flex items-center justify-center transition-all hover:scale-110 hover:bg-white/20 z-30"
+        style={{ 
+          top: 'calc(env(safe-area-inset-top) + 40px)'
+        }}
       >
         <svg 
           xmlns="http://www.w3.org/2000/svg" 

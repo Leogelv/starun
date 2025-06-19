@@ -416,7 +416,7 @@ export const ChatPage = () => {
           </div>
 
           {/* Messages with proper spacing for fixed header */}
-          <div className="flex-1 pt-20 pb-24 overflow-hidden">
+          <div className="flex-1 overflow-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 120px)', paddingBottom: '100px' }}>
             <ChatMessages 
               messages={messages}
               isLoading={isLoading}

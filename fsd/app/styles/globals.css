@@ -57,18 +57,7 @@ body.modal-open {
   width: 100%;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--gradient-glow);
-  opacity: 0.3;
-  pointer-events: none;
-  z-index: 0;
-}
+/* Removed global gradient overlay to prevent flashing */
 
 /* Telegram safe areas */
 .safe-area-top {
