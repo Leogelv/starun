@@ -1,4 +1,4 @@
-import { openLink, utils } from '@telegram-apps/sdk';
+import { openLink } from '@telegram-apps/sdk';
 
 /**
  * Opens a link using Telegram Mini App API with instant view if available
@@ -13,9 +13,6 @@ export const openTelegramLink = (url: string) => {
         openLink(url, {
           tryInstantView: true,
         });
-      } else if (utils && utils.openLink) {
-        // Fallback to utils.openLink
-        utils.openLink(url, { tryInstantView: true });
       } else {
         // Fallback to WebApp.openLink
         const webApp = (window as any).Telegram.WebApp;

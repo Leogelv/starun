@@ -67,6 +67,53 @@ export const ChatPage = () => {
     };
   }, []);
 
+  // Блокируем scroll bounce и фиксируем viewport для iOS
+  useEffect(() => {
+    // Предотвращаем bounce scroll на всем документе
+    const preventBounce = (e: TouchEvent) => {
+      const target = e.target as HTMLElement;
+      const scrollableParent = target.closest('[data-scrollable="true"]');
+      
+      if (!scrollableParent) {
+        e.preventDefault();
+      } else {
+        // Проверяем границы скролла для scrollable элементов
+        const { scrollTop, scrollHeight, clientHeight } = scrollableParent;
+        const isAtTop = scrollTop === 0;
+        const isAtBottom = scrollTop + clientHeight >= scrollHeight;
+        
+        if ((isAtTop && e.touches[0].clientY > e.touches[0].clientY) || 
+            (isAtBottom && e.touches[0].clientY < e.touches[0].clientY)) {
+          e.preventDefault();
+        }
+      }
+    };
+
+    // Фиксируем 100vh для мобильных браузеров
+    const setVH = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    setVH();
+    window.addEventListener('resize', setVH);
+    window.addEventListener('orientationchange', setVH);
+    
+    // Предотвращаем bounce только для iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    if (isIOS) {
+      document.addEventListener('touchmove', preventBounce, { passive: false });
+    }
+
+    return () => {
+      window.removeEventListener('resize', setVH);
+      window.removeEventListener('orientationchange', setVH);
+      if (isIOS) {
+        document.removeEventListener('touchmove', preventBounce);
+      }
+    };
+  }, []);
+
 
   const handleSend = useCallback(async () => {
     console.log('handleSend called with message:', message);
@@ -401,34 +448,50 @@ export const ChatPage = () => {
 
   try {
     return (
-      <div className="h-screen overflow-hidden relative">
-        {/* Fixed Background - lowest layer */}
-        <div className="fixed inset-0 z-0">
+      <div className="fixed inset-0 flex flex-col bg-black overflow-hidden" style={{ 
+        height: 'calc(var(--vh, 1vh) * 100)',
+        touchAction: 'pan-y pinch-zoom'
+      }}>
+        {/* Background - абсолютное позиционирование внутри фиксированного контейнера */}
+        <div className="absolute inset-0 z-0">
           <ChatBackground />
         </div>
 
-        {/* Fixed Header with gradient - middle layer */}
-        <div className="fixed top-0 left-0 right-0 z-30">
+        {/* Header - фиксированная высота */}
+        <div className="relative z-30 flex-shrink-0">
           <ChatHeader />
         </div>
 
-        {/* History button - highest UI layer */}
-        <ChatHistoryPopup onSessionSelect={handleSessionSelect} />
-
-        {/* Scrollable Messages - in between layers */}
-        <div className="absolute inset-0 z-20 overflow-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 100px)', paddingBottom: '100px' }}>
-          <ChatMessages 
-            messages={messages}
-            isLoading={isLoading}
-            allMaterials={allMaterials}
-            userAvatarUrl={useMemo(() => telegramUser?.photo_url || user?.photo_url || undefined, [telegramUser?.photo_url, user?.photo_url])}
-            userName={useMemo(() => telegramUser?.first_name || user?.first_name || undefined, [telegramUser?.first_name, user?.first_name])}
-            messagesEndRef={messagesEndRef}
-          />
+        {/* History popup - поверх всего */}
+        <div className="absolute top-0 left-0 right-0 z-50">
+          <ChatHistoryPopup onSessionSelect={handleSessionSelect} />
         </div>
 
-        {/* Fixed Glass Bottom Bar - high layer */}
-        <div className="fixed bottom-0 left-0 right-0 z-40">
+        {/* Messages - растягивается на оставшееся пространство с возможностью скролла */}
+        <div 
+          className="relative z-20 flex-1 overflow-hidden"
+          data-scrollable="true"
+        >
+          <div className="h-full overflow-y-auto overscroll-none" style={{
+            WebkitOverflowScrolling: 'touch',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
+          }}>
+            <div className="min-h-full px-4 py-4">
+              <ChatMessages 
+                messages={messages}
+                isLoading={isLoading}
+                allMaterials={allMaterials}
+                userAvatarUrl={useMemo(() => telegramUser?.photo_url || user?.photo_url || undefined, [telegramUser?.photo_url, user?.photo_url])}
+                userName={useMemo(() => telegramUser?.first_name || user?.first_name || undefined, [telegramUser?.first_name, user?.first_name])}
+                messagesEndRef={messagesEndRef}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar - фиксированная высота */}
+        <div className="relative z-40 flex-shrink-0">
           <GlassBottomBar
             onMicrophoneClick={toggleRecording}
             isRecording={isRecording}
@@ -444,6 +507,10 @@ export const ChatPage = () => {
     );
   } catch (error) {
     console.error('ChatPage render error:', error);
-    return <div className="text-white p-4">Error rendering chat page: {String(error)}</div>;
+    return (
+      <div className="fixed inset-0 bg-black text-white p-4 flex items-center justify-center">
+        Error rendering chat page: {String(error)}
+      </div>
+    );
   }
 };
