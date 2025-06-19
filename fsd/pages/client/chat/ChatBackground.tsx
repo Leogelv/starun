@@ -21,7 +21,7 @@ export const ChatBackground: React.FC = () => {
       
       {/* Background image with gradient overlay (поверх видео) */}
       <div 
-        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-60"
+        className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat opacity-50"
         style={{
           backgroundImage: 'url(/img/chatscreen.jpg)',
         }}

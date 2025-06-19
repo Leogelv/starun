@@ -401,30 +401,34 @@ export const ChatPage = () => {
 
   try {
     return (
-      <div className="h-screen flex flex-col overflow-hidden">
-        {/* Background */}
-        <ChatBackground />
+      <div className="h-screen flex flex-col overflow-hidden relative">
+        {/* Fixed Background */}
+        <div className="fixed inset-0 z-0">
+          <ChatBackground />
+        </div>
 
         {/* Main content */}
         <div className="relative z-10 flex flex-col h-full">
-          {/* Header with History Icon */}
-          <div className="relative flex-shrink-0">
+          {/* Fixed Header with History Icon */}
+          <div className="fixed top-0 left-0 right-0 z-20">
             <ChatHeader />
             <ChatHistoryPopup onSessionSelect={handleSessionSelect} />
           </div>
 
-          {/* Messages */}
-          <ChatMessages 
-            messages={messages}
-            isLoading={isLoading}
-            allMaterials={allMaterials}
-            userAvatarUrl={useMemo(() => telegramUser?.photo_url || user?.photo_url || undefined, [telegramUser?.photo_url, user?.photo_url])}
-            userName={useMemo(() => telegramUser?.first_name || user?.first_name || undefined, [telegramUser?.first_name, user?.first_name])}
-            messagesEndRef={messagesEndRef}
-          />
+          {/* Messages with proper spacing for fixed header */}
+          <div className="flex-1 pt-20 pb-24 overflow-hidden">
+            <ChatMessages 
+              messages={messages}
+              isLoading={isLoading}
+              allMaterials={allMaterials}
+              userAvatarUrl={useMemo(() => telegramUser?.photo_url || user?.photo_url || undefined, [telegramUser?.photo_url, user?.photo_url])}
+              userName={useMemo(() => telegramUser?.first_name || user?.first_name || undefined, [telegramUser?.first_name, user?.first_name])}
+              messagesEndRef={messagesEndRef}
+            />
+          </div>
 
-          {/* Glass Bottom Bar */}
-          <div className="flex-shrink-0">
+          {/* Fixed Glass Bottom Bar */}
+          <div className="fixed bottom-0 left-0 right-0 z-20">
             <GlassBottomBar
               onMicrophoneClick={toggleRecording}
               isRecording={isRecording}

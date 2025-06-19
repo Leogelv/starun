@@ -133,10 +133,10 @@ export const ChatHistoryPopup: React.FC<ChatHistoryPopupProps> = ({ onSessionSel
 
   return (
     <>
-      {/* History Icon Button */}
+      {/* History Icon Button - Centered */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="absolute top-6 right-4 w-10 h-10 rounded-full bg-white/10 backdrop-blur-lg flex items-center justify-center transition-all hover:scale-110 hover:bg-white/20 z-20"
+        className="absolute top-6 left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-lg flex items-center justify-center transition-all hover:scale-110 hover:bg-white/20 z-30"
         style={{ marginTop: 'env(safe-area-inset-top)' }}
       >
         <svg 
@@ -163,13 +163,13 @@ export const ChatHistoryPopup: React.FC<ChatHistoryPopupProps> = ({ onSessionSel
               onClick={() => setIsOpen(false)}
             />
 
-            {/* Popup Content */}
+            {/* Popup Content - Centered */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, x: 50, y: -50 }}
-              animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, x: 50, y: -50 }}
+              initial={{ opacity: 0, scale: 0.9, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: -20 }}
               transition={{ type: "spring", damping: 25, stiffness: 500 }}
-              className="absolute top-20 right-4 w-80 max-h-96 bg-black/80 backdrop-blur-xl rounded-2xl shadow-xl z-50 overflow-hidden"
+              className="absolute top-20 left-1/2 -translate-x-1/2 w-80 max-h-96 bg-black/80 backdrop-blur-xl rounded-2xl shadow-xl z-50 overflow-hidden"
               style={{ marginTop: 'env(safe-area-inset-top)' }}
             >
               <div className="p-4 border-b border-white/10">
