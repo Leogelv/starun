@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/fsd/shared/clients/supabaseClient';
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 export async function GET(request: Request) {
   try {
@@ -8,18 +8,9 @@ export async function GET(request: Request) {
     const telegramId = searchParams.get('telegram_id');
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 100;
     
-    let query = supabase
+    let query = supabaseServer
       .from('chat_history')
-      .select(`
-        *,
-        tg_users (
-          telegram_id,
-          username,
-          first_name,
-          last_name,
-          photo_url
-        )
-      `)
+      .select('*')
       .order('created_at', { ascending: false })
       .limit(limit);
     
@@ -35,7 +26,7 @@ export async function GET(request: Request) {
     
     if (error) throw error;
     
-    return NextResponse.json({ data: data || [] });
+    return NextResponse.json(data || []);
   } catch (error) {
     console.error('Error fetching chat history:', error);
     return NextResponse.json(
@@ -49,7 +40,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('chat_history')
       .insert(body)
       .select()

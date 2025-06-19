@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/fsd/shared/clients/supabaseClient';
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 export async function DELETE(
   request: Request,
@@ -10,7 +10,7 @@ export async function DELETE(
     const sessionId = params.id;
     
     // Delete all messages in the session
-    const { error } = await supabase
+    const { error } = await supabaseServer
       .from('chat_history')
       .delete()
       .eq('session_id', sessionId);

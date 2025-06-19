@@ -1,15 +1,10 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_KEY!;
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 export async function GET() {
   try {
     // Get user chat statistics using the view
-    const { data: userStats, error: userStatsError } = await supabase
+    const { data: userStats, error: userStatsError } = await supabaseServer
       .from('user_chat_stats')
       .select('*')
       .order('total_messages', { ascending: false })
@@ -18,21 +13,21 @@ export async function GET() {
     if (userStatsError) throw userStatsError;
     
     // Get overall statistics
-    const { data: totalMessages, error: totalError } = await supabase
+    const { data: totalMessages, error: totalError } = await supabaseServer
       .from('chat_history')
       .select('*', { count: 'exact', head: true });
     
     if (totalError) throw totalError;
     
     // Count distinct users manually
-    const { data: distinctUsers } = await supabase
+    const { data: distinctUsers } = await supabaseServer
       .from('chat_history')
       .select('telegram_id');
     
     const totalUsers = new Set(distinctUsers?.map(u => u.telegram_id) || []).size;
     
     // Get messages per day for the last 30 days
-    const { data: dailyStats, error: dailyError } = await supabase
+    const { data: dailyStats, error: dailyError } = await supabaseServer
       .from('chat_history')
       .select('created_at')
       .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());

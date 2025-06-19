@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_KEY!;
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 export async function GET(request: Request) {
   try {
@@ -16,7 +11,7 @@ export async function GET(request: Request) {
     const offset = (page - 1) * limit;
     
     // Get all messages to group by session
-    const { data: messages, error: messagesError } = await supabase
+    const { data: messages, error: messagesError } = await supabaseServer
       .from('chat_history')
       .select('*')
       .order('created_at', { ascending: false });
@@ -25,7 +20,7 @@ export async function GET(request: Request) {
     
     // Get user info separately
     const userIds = [...new Set(messages?.map(m => m.telegram_id) || [])];
-    const { data: users } = await supabase
+    const { data: users } = await supabaseServer
       .from('tg_users')
       .select('telegram_id, username, first_name, last_name')
       .in('telegram_id', userIds);
@@ -69,7 +64,7 @@ export async function GET(request: Request) {
     
     // Get first user message for each session
     for (const [sessionId, sessionInfo] of sessionMap.entries()) {
-      const { data: firstMessage } = await supabase
+      const { data: firstMessage } = await supabaseServer
         .from('chat_history')
         .select('content')
         .eq('session_id', sessionId)

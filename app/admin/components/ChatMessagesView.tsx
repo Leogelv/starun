@@ -51,7 +51,7 @@ export const ChatMessagesView: React.FC<ChatMessagesViewProps> = ({ sessionId, o
         const data = await response.json();
         console.log('ChatMessagesView: Response data:', data);
         
-        const sortedMessages = (data.data || []).sort((a: ChatMessage, b: ChatMessage) => 
+        const sortedMessages = (data || []).sort((a: ChatMessage, b: ChatMessage) => 
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
         console.log('ChatMessagesView: Sorted messages:', sortedMessages.length, 'items');
