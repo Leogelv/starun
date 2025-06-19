@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { hapticFeedback } from "@telegram-apps/sdk-react";
 import { GlassBottomBar } from '@/fsd/shared/components/GlassBottomBar';
 import { getApiBaseURL } from '@/fsd/shared/api';
+import { openTelegramLink } from '@/fsd/shared/utils/openTelegramLink';
 
 export const ProfilePage = () => {
     const { user } = useTelegramUser();
@@ -115,12 +116,12 @@ export const ProfilePage = () => {
                 {/* Channel buttons with new images and cosmic theme */}
                 <div className="space-y-6 max-w-md mx-auto">
                     {/* Зал Созвездий */}
-                    <a 
-                        href="https://t.me/+CgWZpf-8DVUwY2Qy"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => hapticFeedback.impactOccurred('medium')}
-                        className="block relative overflow-hidden group"
+                    <div 
+                        onClick={() => {
+                            hapticFeedback.impactOccurred('medium');
+                            openTelegramLink('https://t.me/+CgWZpf-8DVUwY2Qy');
+                        }}
+                        className="block relative overflow-hidden group cursor-pointer"
                     >
                         <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-8 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-500/30">
                             <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -149,15 +150,15 @@ export const ProfilePage = () => {
                             <div className="absolute bottom-4 right-8 w-1.5 h-1.5 bg-indigo-400 rounded-full animate-pulse opacity-40" style={{ animationDelay: '1s' }}></div>
                             <div className="absolute top-6 right-12 w-1 h-1 bg-purple-300 rounded-full animate-pulse opacity-50" style={{ animationDelay: '2s' }}></div>
                         </div>
-                    </a>
+                    </div>
 
                     {/* Канал StarUnity */}
-                    <a 
-                        href="https://t.me/+0zxZzcja4b40YmQy"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => hapticFeedback.impactOccurred('medium')}
-                        className="block relative overflow-hidden group"
+                    <div 
+                        onClick={() => {
+                            hapticFeedback.impactOccurred('medium');
+                            openTelegramLink('https://t.me/+0zxZzcja4b40YmQy');
+                        }}
+                        className="block relative overflow-hidden group cursor-pointer"
                     >
                         <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl p-8 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-blue-500/30">
                             <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-cyan-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -186,7 +187,7 @@ export const ProfilePage = () => {
                             <div className="absolute top-4 left-8 w-1.5 h-1.5 bg-cyan-400 rounded-full animate-pulse opacity-40" style={{ animationDelay: '1.5s' }}></div>
                             <div className="absolute bottom-6 left-16 w-1 h-1 bg-blue-300 rounded-full animate-pulse opacity-50" style={{ animationDelay: '0.5s' }}></div>
                         </div>
-                    </a>
+                    </div>
                 </div>
 
                 {/* Version info */}

@@ -40,10 +40,10 @@ export const ChatPage = () => {
     }
   }, []);
 
-  // Scroll to bottom when messages change
-  useEffect(() => {
+  // Handle input focus - scroll to bottom
+  const handleInputFocus = useCallback(() => {
     scrollToBottom();
-  }, [messages, scrollToBottom]);
+  }, [scrollToBottom]);
 
   // Initialize new session if needed
   useEffect(() => {
@@ -152,9 +152,6 @@ export const ChatPage = () => {
           content: 'Не удалось найти подходящие практики по вашему запросу. Попробуйте просмотреть каталог или спросить что-то другое.'
         }]);
       }
-      
-      // Auto-scroll after AI response
-      scrollToBottom();
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { 
@@ -440,6 +437,7 @@ export const ChatPage = () => {
             onMessageChange={setMessage}
             onSendMessage={handleSend}
             isLoading={isLoading}
+            onInputFocus={handleInputFocus}
           />
         </div>
       </div>

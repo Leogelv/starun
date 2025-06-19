@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { openLink } from '@telegram-apps/sdk-react';
+import { openTelegramLink } from '@/fsd/shared/utils/openTelegramLink';
 
 interface MaterialCardProps {
   material: {
@@ -17,14 +17,7 @@ export const MaterialCard = React.memo(({ material, compact = false }: MaterialC
   const [isExpanded, setIsExpanded] = useState(false);
   
   const handleMaterialClick = (link: string) => {
-    try {
-      // Используем tryInstantView для нативного превью в Telegram
-      openLink(link, { tryInstantView: true });
-    } catch (error) {
-      console.error('Error opening link:', error);
-      // Fallback для старых версий или если tryInstantView не поддерживается
-      openLink(link);
-    }
+    openTelegramLink(link);
   };
 
   const displayText = material.description && !isExpanded && material.description.length > 140 
