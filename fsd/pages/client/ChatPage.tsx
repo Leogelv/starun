@@ -19,7 +19,7 @@ export const ChatPage = () => {
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string, materialIds?: number[] }[]>([]);
+  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string, materialIds?: number[], isInitial?: boolean }[]>([]);
   const [lastMessageTime, setLastMessageTime] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { data: allMaterials } = useMaterials();
@@ -48,12 +48,15 @@ export const ChatPage = () => {
   // Initialize new session if needed
   useEffect(() => {
     if (!sessionId && messages.length === 0) {
+      const firstName = telegramUser?.first_name || user?.first_name || '';
+      const greeting = firstName ? `Привет, ${firstName}! ` : 'Привет! ';
       setMessages([{
         role: 'assistant',
-        content: 'Какой запрос сегодня? Что реально на душе сейчас? ✨'
+        content: `${greeting}Какой запрос сегодня? Что реально на душе сейчас? ✨`,
+        isInitial: true
       }]);
     }
-  }, [sessionId, messages.length]);
+  }, [sessionId, messages.length, telegramUser?.first_name, user?.first_name]);
 
   // Initialize MediaRecorder for audio recording
   useEffect(() => {
@@ -416,7 +419,7 @@ export const ChatPage = () => {
         <ChatHistoryPopup onSessionSelect={handleSessionSelect} />
 
         {/* Scrollable Messages - in between layers */}
-        <div className="absolute inset-0 z-20 overflow-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 150px)', paddingBottom: '100px' }}>
+        <div className="absolute inset-0 z-20 overflow-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top) + 100px)', paddingBottom: '100px' }}>
           <ChatMessages 
             messages={messages}
             isLoading={isLoading}

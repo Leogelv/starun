@@ -138,7 +138,7 @@ export const ChatHistoryPopup: React.FC<ChatHistoryPopupProps> = ({ onSessionSel
         onClick={() => setIsOpen(!isOpen)}
         className="fixed left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white/10 backdrop-blur-lg flex items-center justify-center transition-all hover:scale-110 hover:bg-white/20 z-50"
         style={{ 
-          top: 'calc(env(safe-area-inset-top) + 70px)'
+          top: 'calc(env(safe-area-inset-top) + 40px)'
         }}
       >
         <svg 

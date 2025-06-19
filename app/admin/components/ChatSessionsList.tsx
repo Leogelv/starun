@@ -51,6 +51,25 @@ export const ChatSessionsList: React.FC<ChatSessionsListProps> = ({ onSessionSel
     fetchSessions();
   }, [fetchSessions]);
 
+  const handleDeleteSession = async (sessionId: string) => {
+    try {
+      const response = await fetch(`/api/chat-history/sessions/${sessionId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Refresh the sessions list
+        fetchSessions();
+      } else {
+        console.error('Failed to delete session');
+        alert('Ошибка при удалении сессии');
+      }
+    } catch (error) {
+      console.error('Error deleting session:', error);
+      alert('Ошибка при удалении сессии');
+    }
+  };
+
   const filteredSessions = sessions.filter(session => {
     if (!searchTerm) return true;
     const search = searchTerm.toLowerCase();
@@ -179,8 +198,24 @@ export const ChatSessionsList: React.FC<ChatSessionsListProps> = ({ onSessionSel
                 </span>
               </div>
 
-              <div className="text-electric-blue group-hover:text-cyan-neon transition-colors text-sm font-medium">
-                Открыть чат →
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (confirm('Удалить эту сессию и все ее сообщения?')) {
+                      handleDeleteSession(session.session_id);
+                    }
+                  }}
+                  className="p-2 rounded-lg hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all"
+                  title="Удалить сессию"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+                <div className="text-electric-blue group-hover:text-cyan-neon transition-colors text-sm font-medium">
+                  Открыть чат →
+                </div>
               </div>
             </div>
           </div>

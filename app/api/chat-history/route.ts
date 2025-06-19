@@ -6,11 +6,22 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get('session_id');
     const telegramId = searchParams.get('telegram_id');
+    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 100;
     
     let query = supabase
       .from('chat_history')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select(`
+        *,
+        tg_users (
+          telegram_id,
+          username,
+          first_name,
+          last_name,
+          photo_url
+        )
+      `)
+      .order('created_at', { ascending: false })
+      .limit(limit);
     
     if (sessionId) {
       query = query.eq('session_id', sessionId);
@@ -24,7 +35,7 @@ export async function GET(request: Request) {
     
     if (error) throw error;
     
-    return NextResponse.json(data);
+    return NextResponse.json({ data: data || [] });
   } catch (error) {
     console.error('Error fetching chat history:', error);
     return NextResponse.json(

@@ -77,6 +77,25 @@ export const ChatMessagesView: React.FC<ChatMessagesViewProps> = ({ sessionId, o
     fetchMessages();
   }, [fetchMessages]);
 
+  const handleDeleteMessage = async (messageId: number) => {
+    try {
+      const response = await fetch(`/api/chat-history/${messageId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Remove the message from the local state
+        setMessages(messages.filter(msg => msg.id !== messageId));
+      } else {
+        console.error('Failed to delete message');
+        alert('Ошибка при удалении сообщения');
+      }
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      alert('Ошибка при удалении сообщения');
+    }
+  };
+
   const formatTime = (dateString: string) => {
     return new Date(dateString).toLocaleTimeString('ru-RU', {
       hour: '2-digit',
@@ -168,7 +187,7 @@ export const ChatMessagesView: React.FC<ChatMessagesViewProps> = ({ sessionId, o
                 )}
 
                 {/* Message */}
-                <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
+                <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 group`}>
                   <div className={`max-w-[70%] ${isUser ? 'order-1' : 'order-2'}`}>
                     <div
                       className={`rounded-2xl px-4 py-3 ${
@@ -196,8 +215,23 @@ export const ChatMessagesView: React.FC<ChatMessagesViewProps> = ({ sessionId, o
                       )}
                     </div>
                     
-                    <div className={`text-xs text-white/50 mt-1 ${isUser ? 'text-right' : 'text-left'}`}>
-                      {formatTime(message.created_at)}
+                    <div className={`flex items-center gap-2 mt-1 ${isUser ? 'justify-end' : 'justify-start'}`}>
+                      <span className="text-xs text-white/50">
+                        {formatTime(message.created_at)}
+                      </span>
+                      <button
+                        onClick={() => {
+                          if (confirm('Удалить это сообщение?')) {
+                            handleDeleteMessage(message.id);
+                          }
+                        }}
+                        className="p-1 rounded hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all opacity-0 group-hover:opacity-100"
+                        title="Удалить сообщение"
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
 

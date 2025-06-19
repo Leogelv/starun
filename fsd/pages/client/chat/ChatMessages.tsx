@@ -3,11 +3,13 @@
 import React, { useMemo } from 'react';
 import { MarkdownMessage } from '@/fsd/shared/components/MarkdownMessage';
 import { MaterialCard } from '@/fsd/shared/components/MaterialCard';
+import { TypewriterMessage } from './TypewriterMessage';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   materialIds?: number[];
+  isInitial?: boolean;
 }
 
 interface ChatMessagesProps {
@@ -38,7 +40,11 @@ export const ChatMessages: React.FC<ChatMessagesProps> = React.memo(({
                   ? 'bg-gradient-sky text-white shadow-lg shadow-blue-500/20' 
                   : 'bg-white/10 text-white shadow-lg shadow-white/20'
               }`}>
-                <MarkdownMessage content={msg.content} className="text-sm" />
+                {msg.isInitial && msg.role === 'assistant' ? (
+                  <TypewriterMessage content={msg.content} className="text-sm" speed={30} />
+                ) : (
+                  <MarkdownMessage content={msg.content} className="text-sm" />
+                )}
               </div>
               {msg.role === 'user' && (
                 <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 shadow-lg bg-gray-200">

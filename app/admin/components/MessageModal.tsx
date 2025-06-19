@@ -21,10 +21,31 @@ interface MessageModalProps {
     messages: ChatMessage[];
   };
   onClose: () => void;
+  onMessageDeleted?: () => void;
 }
 
-export const MessageModal: React.FC<MessageModalProps> = ({ session, onClose }) => {
+export const MessageModal: React.FC<MessageModalProps> = ({ session, onClose, onMessageDeleted }) => {
   const { sessionId, telegramId, messages } = session;
+
+  const deleteMessage = async (messageId: number) => {
+    if (!confirm('Вы уверены, что хотите удалить это сообщение?')) return;
+    
+    try {
+      const response = await fetch(`/api/chat-history/${messageId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        onMessageDeleted?.();
+        onClose();
+      } else {
+        alert('Ошибка при удалении сообщения');
+      }
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      alert('Ошибка при удалении сообщения');
+    }
+  };
 
   // Close modal with Escape key
   useEffect(() => {
@@ -103,12 +124,21 @@ export const MessageModal: React.FC<MessageModalProps> = ({ session, onClose }) 
                   className={`flex ${message.message_type === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[70%] rounded-2xl p-4 ${
+                    className={`max-w-[70%] rounded-2xl p-4 relative group ${
                       message.message_type === 'user'
                         ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white'
                         : 'bg-white/10 text-white border border-white/20'
                     }`}
                   >
+                    {/* Delete button */}
+                    <button
+                      onClick={() => deleteMessage(message.id)}
+                      className="absolute top-2 right-2 w-6 h-6 rounded-full bg-red-500/20 hover:bg-red-500/40 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+                    >
+                      <svg className="w-3 h-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
                     {/* Message header */}
                     <div className="flex items-center gap-2 mb-2">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${

@@ -47,6 +47,25 @@ export const ChatHistoryList = () => {
     }
   };
 
+  const deleteSession = async (sessionId: string) => {
+    if (!confirm('Вы уверены, что хотите удалить эту сессию?')) return;
+    
+    try {
+      const response = await fetch(`/api/chat-sessions/${sessionId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        fetchMessages();
+      } else {
+        alert('Ошибка при удалении сессии');
+      }
+    } catch (error) {
+      console.error('Error deleting session:', error);
+      alert('Ошибка при удалении сессии');
+    }
+  };
+
   useEffect(() => {
     fetchMessages();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -147,10 +166,23 @@ export const ChatHistoryList = () => {
                   return (
                     <div
                       key={sessionId}
-                      className="bg-white/5 rounded-xl p-4 flex-shrink-0 hover:bg-white/10 transition-all cursor-pointer"
+                      className="bg-white/5 rounded-xl p-4 flex-shrink-0 hover:bg-white/10 transition-all cursor-pointer relative"
                       style={{ width: '300px' }}
                       onClick={() => setSelectedSession({ sessionId, telegramId: parseInt(telegramId), messages: sortedMessages })}
                     >
+                      {/* Delete Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteSession(sessionId);
+                        }}
+                        className="absolute top-2 right-2 w-8 h-8 rounded-full bg-red-500/20 hover:bg-red-500/40 flex items-center justify-center transition-all"
+                      >
+                        <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+
                       {/* Session Header */}
                       <div className="mb-3">
                         <p className="text-xs text-white/40 mb-1">Session ID</p>
@@ -212,6 +244,7 @@ export const ChatHistoryList = () => {
         <MessageModal 
           session={selectedSession}
           onClose={() => setSelectedSession(null)}
+          onMessageDeleted={fetchMessages}
         />
       )}
     </div>
