@@ -8,9 +8,10 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { telegram_id: string } }
+  context: { params: Promise<{ telegram_id: string }> }
 ) {
   try {
+    const params = await context.params;
     const telegram_id = parseInt(params.telegram_id);
     
     // Get all messages for this user
