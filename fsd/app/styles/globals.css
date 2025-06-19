@@ -48,8 +48,6 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: none;
 }
 
 /* Prevent body scroll when modal is open */
@@ -81,27 +79,14 @@ body::before {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Smooth scrolling performance optimization */
+/* Smooth scrolling */
 .scroll-smooth {
   scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
 }
 
-/* Prevent scroll jank */
+/* Prevent tap highlight */
 * {
   -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-}
-
-/* Fix scroll blocking issues */
-.overflow-y-auto {
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
-}
-
-/* Optimize rendering performance */
-.will-change-scroll {
-  will-change: scroll-position;
 }
 
 /* Hide scrollbar but keep functionality */
@@ -286,8 +271,6 @@ body::before {
 .scrollbar-hide {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* Line clamp utility */

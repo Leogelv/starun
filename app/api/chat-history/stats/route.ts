@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/fsd/shared/clients/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function GET() {
   try {
@@ -19,12 +24,12 @@ export async function GET() {
     
     if (totalError) throw totalError;
     
-    const { data: totalUsers, error: usersError } = await supabase
-      .rpc('count_distinct_users');
+    // Count distinct users manually
+    const { data: distinctUsers } = await supabase
+      .from('chat_history')
+      .select('telegram_id');
     
-    if (usersError) {
-      console.error('Error counting users:', usersError);
-    }
+    const totalUsers = new Set(distinctUsers?.map(u => u.telegram_id) || []).size;
     
     // Get messages per day for the last 30 days
     const { data: dailyStats, error: dailyError } = await supabase

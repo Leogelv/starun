@@ -60,7 +60,8 @@ export async function POST(request: NextRequest) {
           message_type: 'user',
           content: question,
           session_id: sessionId
-        });
+        })
+        .select();
 
       if (userError) {
         console.error('Error saving user message:', userError);
@@ -109,7 +110,8 @@ export async function POST(request: NextRequest) {
           content: finalComment,
           material_ids: materialIds.length > 0 ? materialIds : null,
           session_id: sessionId
-        });
+        })
+        .select();
 
       if (assistantError) {
         console.error('Error saving assistant message:', assistantError);

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { hapticFeedback, useLaunchParams } from '@telegram-apps/sdk-react';
 import { useTelegramUser } from "@/fsd/app/providers/TelegramUser";
 import { useMaterials } from '@/fsd/entities/meditation/hooks/useMaterials';
@@ -9,6 +9,7 @@ import { getApiBaseURL } from '@/fsd/shared/api';
 import { ChatBackground } from './chat/ChatBackground';
 import { ChatHeader } from './chat/ChatHeader';
 import { ChatMessages } from './chat/ChatMessages';
+import { ChatHistoryPopup } from './chat/ChatHistoryPopup';
 
 export const ChatPage = () => {
   const { user } = useTelegramUser();
@@ -17,20 +18,14 @@ export const ChatPage = () => {
   
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
-  const [sessionId] = useState<string>(crypto.randomUUID());
-  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string, materialIds?: number[] }[]>([
-    {
-      role: 'assistant',
-      content: 'Какой запрос сегодня? Что реально на душе сейчас? ✨'
-    }
-  ]);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string, materialIds?: number[] }[]>([]);
+  const [lastMessageTime, setLastMessageTime] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { data: allMaterials } = useMaterials();
   const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
   const audioChunksRef = React.useRef<Blob[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
-  const [isInputFocused, setIsInputFocused] = useState(false);
   
   console.log('ChatPage - User from DB:', user);
   console.log('ChatPage - TelegramUser from launchParams:', telegramUser);
@@ -41,33 +36,24 @@ export const ChatPage = () => {
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = useCallback(() => {
     if (messagesEndRef.current) {
-      requestAnimationFrame(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      });
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
 
-  // Scroll to bottom when messages change or input is focused
-  useLayoutEffect(() => {
+  // Scroll to bottom when messages change
+  useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  // Handle keyboard visibility and scroll adjustments
+  // Initialize new session if needed
   useEffect(() => {
-    const handleResize = () => {
-      if (isInputFocused) {
-        setTimeout(scrollToBottom, 300);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isInputFocused, scrollToBottom]);
-
-  // Log session creation
-  useEffect(() => {
-    console.log('New chat session created:', sessionId);
-  }, [sessionId]);
+    if (!sessionId && messages.length === 0) {
+      setMessages([{
+        role: 'assistant',
+        content: 'Какой запрос сегодня? Что реально на душе сейчас? ✨'
+      }]);
+    }
+  }, [sessionId, messages.length]);
 
   // Initialize MediaRecorder for audio recording
   useEffect(() => {
@@ -90,6 +76,17 @@ export const ChatPage = () => {
     setIsLoading(true);
     console.log('Sending message to API:', { userMessage, sessionId });
 
+    // Create new session if needed or continue existing
+    let currentSessionId = sessionId;
+    if (!currentSessionId || (lastMessageTime && new Date().getTime() - lastMessageTime.getTime() > 30 * 60 * 1000)) {
+      // Create new session if no session or 30+ minutes since last message
+      currentSessionId = crypto.randomUUID();
+      setSessionId(currentSessionId);
+      console.log('Creating new session:', currentSessionId);
+    }
+    
+    setLastMessageTime(new Date());
+
     try {
       const response = await fetch(`${getApiBaseURL()}/chat`, {
         method: 'POST',
@@ -99,7 +96,7 @@ export const ChatPage = () => {
         body: JSON.stringify({
           telegram_id: user?.telegram_id || telegramUser?.id,
           question: userMessage,
-          session_id: sessionId,
+          session_id: currentSessionId,
         }),
       });
 
@@ -154,7 +151,7 @@ export const ChatPage = () => {
       }
       
       // Auto-scroll after AI response
-      setTimeout(scrollToBottom, 100);
+      scrollToBottom();
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { 
@@ -164,7 +161,7 @@ export const ChatPage = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [message, user, telegramUser, sessionId, scrollToBottom]);
+  }, [message, user, telegramUser, sessionId, lastMessageTime, scrollToBottom]);
 
   const toggleRecording = useCallback(async () => {
     hapticFeedback.impactOccurred('medium');
@@ -267,6 +264,49 @@ export const ChatPage = () => {
     }
   }, [isRecording]);
 
+  const handleSessionSelect = useCallback(async (selectedSessionId: string) => {
+    try {
+      console.log('Loading session:', selectedSessionId);
+      
+      // Get all user's messages from external API
+      const telegramId = user?.telegram_id || telegramUser?.id;
+      console.log('Loading messages for telegram_id:', telegramId);
+      
+      const response = await fetch(`https://primary-production-ee24.up.railway.app/webhook/my_chats?telegram_id=${telegramId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (response.ok) {
+        const allMessages = await response.json();
+        
+        // Filter messages for selected session
+        const sessionMessages = allMessages
+          .filter((msg: any) => msg.session_id === selectedSessionId)
+          .sort((a: any, b: any) => 
+            new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
+        
+        console.log('Loaded session messages:', sessionMessages);
+        
+        // Convert to chat format
+        const chatMessages = sessionMessages.map((msg: any) => ({
+          role: msg.message_type as 'user' | 'assistant',
+          content: msg.content,
+          materialIds: msg.material_ids
+        }));
+        
+        setMessages(chatMessages);
+        setSessionId(selectedSessionId);
+        setLastMessageTime(new Date());
+      }
+    } catch (error) {
+      console.error('Error loading session:', error);
+    }
+  }, [user?.telegram_id, telegramUser?.id]);
+
   const transcribeAudio = useCallback(async (audioBlob: Blob, mimeType: string) => {
     try {
       setIsLoading(true);
@@ -358,51 +398,43 @@ export const ChatPage = () => {
     }
   }, [setMessage, setIsLoading]);
 
-  // Handle input focus/blur for keyboard adjustments
-  const handleInputFocus = useCallback(() => {
-    setIsInputFocused(true);
-    setTimeout(scrollToBottom, 300);
-  }, [scrollToBottom]);
-
-  const handleInputBlur = useCallback(() => {
-    setIsInputFocused(false);
-  }, []);
 
   try {
     return (
-      <div className="fixed inset-0 flex flex-col">
-        {/* Background Components */}
+      <div className="h-screen flex flex-col overflow-hidden">
+        {/* Background */}
         <ChatBackground />
 
-        {/* UI overlay */}
-        <div className="relative z-10 flex-1 flex flex-col min-h-0">
-          {/* Header */}
-          <ChatHeader />
-
-          {/* Messages - with ref for container */}
-          <div ref={chatContainerRef} className="flex-1 min-h-0">
-            <ChatMessages 
-              messages={messages}
-              isLoading={isLoading}
-              allMaterials={allMaterials}
-              userAvatarUrl={useMemo(() => telegramUser?.photo_url || user?.photo_url || undefined, [telegramUser?.photo_url, user?.photo_url])}
-              userName={useMemo(() => telegramUser?.first_name || user?.first_name || undefined, [telegramUser?.first_name, user?.first_name])}
-              messagesEndRef={messagesEndRef}
-            />
+        {/* Main content */}
+        <div className="relative z-10 flex flex-col h-full">
+          {/* Header with History Icon */}
+          <div className="relative flex-shrink-0">
+            <ChatHeader />
+            <ChatHistoryPopup onSessionSelect={handleSessionSelect} />
           </div>
 
-          {/* Glass Bottom Bar */}
-          <GlassBottomBar
-            onMicrophoneClick={toggleRecording}
-            isRecording={isRecording}
-            showTextInput={true}
-            message={message}
-            onMessageChange={setMessage}
-            onSendMessage={handleSend}
+          {/* Messages */}
+          <ChatMessages 
+            messages={messages}
             isLoading={isLoading}
-            onInputFocus={handleInputFocus}
-            onInputBlur={handleInputBlur}
+            allMaterials={allMaterials}
+            userAvatarUrl={useMemo(() => telegramUser?.photo_url || user?.photo_url || undefined, [telegramUser?.photo_url, user?.photo_url])}
+            userName={useMemo(() => telegramUser?.first_name || user?.first_name || undefined, [telegramUser?.first_name, user?.first_name])}
+            messagesEndRef={messagesEndRef}
           />
+
+          {/* Glass Bottom Bar */}
+          <div className="flex-shrink-0">
+            <GlassBottomBar
+              onMicrophoneClick={toggleRecording}
+              isRecording={isRecording}
+              showTextInput={true}
+              message={message}
+              onMessageChange={setMessage}
+              onSendMessage={handleSend}
+              isLoading={isLoading}
+            />
+          </div>
         </div>
       </div>
     );

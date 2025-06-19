@@ -28,7 +28,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = React.memo(({
   messagesEndRef
 }) => {
   return (
-    <div className="flex-1 overflow-y-auto px-4 scroll-smooth will-change-scroll" style={{ paddingBottom: 'calc(160px + env(safe-area-inset-bottom))' }}>
+    <div className="flex-1 overflow-y-auto px-4" style={{ paddingBottom: '160px' }}>
       <div className="w-full max-w-lg mx-auto space-y-4">
         {messages.map((msg, idx) => (
           <div key={idx} className="space-y-3">
