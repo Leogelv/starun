@@ -3,9 +3,10 @@ import { supabase } from '@/fsd/shared/clients/supabaseClient';
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params;
     const sessionId = params.id;
     
     // Delete all messages in the session
