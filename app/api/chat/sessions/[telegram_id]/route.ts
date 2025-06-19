@@ -26,7 +26,12 @@ export async function GET(
     }
 
     // Group messages by session_id
-    const sessionMap = new Map();
+    const sessionMap = new Map<string, {
+      session_id: string;
+      telegram_id: number;
+      created_at: string;
+      messages: any[];
+    }>();
     
     messages?.forEach(msg => {
       const sessionId = msg.session_id;
@@ -47,7 +52,7 @@ export async function GET(
     // Convert to array and sort messages within each session
     const sessionsWithMessages = Array.from(sessionMap.values()).map(session => ({
       ...session,
-      messages: session.messages.sort((a, b) => 
+      messages: session.messages.sort((a: any, b: any) => 
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       )
     }));
