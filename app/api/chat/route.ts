@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/fsd/shared/clients/supabaseClient';
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 export async function POST(request: NextRequest) {
   try {
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         session_id: sessionId
       });
 
-      const { data: userInsert, error: userError } = await supabase
+      const { data: userInsert, error: userError } = await supabaseServer
         .from('chat_history')
         .insert({
           telegram_id: telegram_id || 123456789,
@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
         session_id: sessionId
       });
 
-      const { data: assistantInsert, error: assistantError } = await supabase
+      const { data: assistantInsert, error: assistantError } = await supabaseServer
         .from('chat_history')
         .insert({
           telegram_id: telegram_id || 123456789,
