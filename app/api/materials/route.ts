@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/fsd/shared/clients/supabaseClient';
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const subtopicId = searchParams.get('subtopic_id');
     
-    let query = supabase
+    let query = supabaseServer
       .from('materials')
       .select('*')
       .order('created_at', { ascending: false });
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('materials')
       .insert(body)
       .select()

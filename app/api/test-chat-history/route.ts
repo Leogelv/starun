@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/fsd/shared/clients/supabaseClient';
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 export async function GET() {
   try {
     console.log('Testing chat_history table...');
     
     // Test if table exists by trying to select from it
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('chat_history')
       .select('*')
       .limit(1);
@@ -30,7 +30,7 @@ export async function GET() {
       session_id: crypto.randomUUID()
     };
     
-    const { data: insertData, error: insertError } = await supabase
+    const { data: insertData, error: insertError } = await supabaseServer
       .from('chat_history')
       .insert(testRecord)
       .select();
@@ -48,7 +48,7 @@ export async function GET() {
     
     // Clean up test record
     if (insertData && insertData[0]) {
-      await supabase
+      await supabaseServer
         .from('chat_history')
         .delete()
         .eq('id', insertData[0].id);

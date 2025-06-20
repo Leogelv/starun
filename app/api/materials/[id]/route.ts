@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/fsd/shared/clients/supabaseClient';
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 export async function GET(
   request: Request,
@@ -7,7 +7,7 @@ export async function GET(
 ) {
   const { id } = await params;
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('materials')
       .select('*')
       .eq('id', id)
@@ -43,7 +43,7 @@ export async function PUT(
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id: bodyId, created_at, ...updateData } = body; // Remove non-updatable fields
     
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('materials')
               .update(updateData)
         .eq('id', id)
@@ -76,7 +76,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
-    const { error } = await supabase
+    const { error } = await supabaseServer
       .from('materials')
               .delete()
         .eq('id', id);

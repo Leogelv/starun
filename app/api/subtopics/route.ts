@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/fsd/shared/clients/supabaseClient';
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const includeCount = searchParams.get('include_count') === 'true';
     
-    const query = supabase
+    const query = supabaseServer
       .from('subtopics')
       .select('*')
       .order('name', { ascending: true });
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
       // Get material counts for each subtopic
       const subtopicsWithCount = await Promise.all(
         subtopics.map(async (subtopic) => {
-          const { count, error: countError } = await supabase
+          const { count, error: countError } = await supabaseServer
             .from('materials')
             .select('id', { count: 'exact' })
             .eq('subtopic_id', subtopic.id);
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     
     // Check for duplicate name
-    const { data: existing, error: checkError } = await supabase
+    const { data: existing, error: checkError } = await supabaseServer
       .from('subtopics')
       .select('id')
       .eq('name', body.name)
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       );
     }
     
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('subtopics')
       .insert(body)
       .select()

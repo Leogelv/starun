@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/fsd/shared/clients/supabaseClient';
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 export async function GET(
   request: Request,
@@ -7,7 +7,7 @@ export async function GET(
 ) {
   const { id } = await params;
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('subtopics')
       .select('*')
       .eq('id', id)
@@ -43,7 +43,7 @@ export async function PUT(
     const { id: bodyId, created_at, ...updateData } = body; // Remove non-updatable fields
     
     // Check for duplicate name
-    const { data: existing, error: checkError } = await supabase
+    const { data: existing, error: checkError } = await supabaseServer
       .from('subtopics')
       .select('id')
       .eq('name', updateData.name)
@@ -61,7 +61,7 @@ export async function PUT(
       );
     }
     
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('subtopics')
       .update(updateData)
       .eq('id', id)
@@ -87,7 +87,7 @@ export async function DELETE(
   const { id } = await params;
   try {
     // Check if subtopic has materials
-    const { data: materials, error: checkError } = await supabase
+    const { data: materials, error: checkError } = await supabaseServer
       .from('materials')
       .select('id')
       .eq('subtopic_id', id)
@@ -102,7 +102,7 @@ export async function DELETE(
       );
     }
     
-    const { error } = await supabase
+    const { error } = await supabaseServer
       .from('subtopics')
       .delete()
       .eq('id', id);
