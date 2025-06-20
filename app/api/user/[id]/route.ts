@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import {supabase} from "@/fsd/shared/clients/supabaseClient";
+import {supabaseServer} from "@/fsd/shared/clients/supabaseServer";
 import { UpdateData } from '@/types/common';
 
 export async function GET(
@@ -7,7 +7,7 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const { data, error } = await supabase.from("tg_users").select("*").eq('telegram_id', id);
+    const { data, error } = await supabaseServer.from("tg_users").select("*").eq('telegram_id', id);
 
     if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
@@ -31,7 +31,7 @@ export async function PATCH(
         console.log('Updating user:', id, body);
 
         // Check if user exists
-        const { data: existingUser, error: selectError } = await supabase
+        const { data: existingUser, error: selectError } = await supabaseServer
             .from("tg_users")
             .select("*")
             .eq('telegram_id', id)
@@ -43,7 +43,7 @@ export async function PATCH(
 
         if (!existingUser) {
             // User doesn't exist, create new one
-            const { data, error } = await supabase
+            const { data, error } = await supabaseServer
                 .from("tg_users")
                 .insert({
                     telegram_id: parseInt(id),
@@ -74,7 +74,7 @@ export async function PATCH(
             if (last_name) updateData.last_name = last_name;
             if (username) updateData.username = username;
 
-            const { data, error } = await supabase
+            const { data, error } = await supabaseServer
                 .from("tg_users")
                 .update(updateData)
                 .eq('telegram_id', id)
