@@ -6,6 +6,7 @@ import { useTelegramUser } from "@/fsd/app/providers/TelegramUser";
 import { useMaterials } from '@/fsd/entities/meditation/hooks/useMaterials';
 import { GlassBottomBar } from '@/fsd/shared/components/GlassBottomBar';
 import { getApiBaseURL } from '@/fsd/shared/api';
+import { logger } from '@/fsd/shared/utils/logger';
 import { ChatBackground } from './chat/ChatBackground';
 import { ChatHeader } from './chat/ChatHeader';
 import { ChatMessages } from './chat/ChatMessages';
@@ -74,28 +75,8 @@ export const ChatPage = () => {
     };
   }, []);
 
-  // Блокируем scroll bounce и фиксируем viewport для iOS
+  // Фиксируем viewport для мобильных браузеров (упрощенная версия)
   useEffect(() => {
-    // Предотвращаем bounce scroll на всем документе
-    const preventBounce = (e: TouchEvent) => {
-      const target = e.target as HTMLElement;
-      const scrollableParent = target.closest('[data-scrollable="true"]');
-      
-      if (!scrollableParent) {
-        e.preventDefault();
-      } else {
-        // Проверяем границы скролла для scrollable элементов
-        const { scrollTop, scrollHeight, clientHeight } = scrollableParent;
-        const isAtTop = scrollTop === 0;
-        const isAtBottom = scrollTop + clientHeight >= scrollHeight;
-        
-        if ((isAtTop && e.touches[0].clientY > e.touches[0].clientY) || 
-            (isAtBottom && e.touches[0].clientY < e.touches[0].clientY)) {
-          e.preventDefault();
-        }
-      }
-    };
-
     // Фиксируем 100vh для мобильных браузеров
     const setVH = () => {
       const vh = window.innerHeight * 0.01;
@@ -105,19 +86,10 @@ export const ChatPage = () => {
     setVH();
     window.addEventListener('resize', setVH);
     window.addEventListener('orientationchange', setVH);
-    
-    // Предотвращаем bounce только для iOS
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOS) {
-      document.addEventListener('touchmove', preventBounce, { passive: false });
-    }
 
     return () => {
       window.removeEventListener('resize', setVH);
       window.removeEventListener('orientationchange', setVH);
-      if (isIOS) {
-        document.removeEventListener('touchmove', preventBounce);
-      }
     };
   }, []);
 
@@ -208,6 +180,20 @@ export const ChatPage = () => {
       }
     } catch (error) {
       console.error('Chat error:', error);
+      
+      // Логируем ошибку в Supabase
+      logger.error(
+        'Chat API Error',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          userMessage,
+          sessionId: currentSessionId,
+          apiEndpoint: `${getApiBaseURL()}/chat`,
+        },
+        user?.telegram_id || (telegramUser?.id !== undefined ? String(telegramUser.id) : undefined),
+        currentSessionId
+      );
+      
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: `Извините, произошла ошибка. Пожалуйста, попробуйте еще раз.`

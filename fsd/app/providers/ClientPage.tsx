@@ -3,6 +3,7 @@ import {useEffect} from "react";
 import {hideBackButton, onBackButtonClick, showBackButton} from "@telegram-apps/sdk-react";
 import {useRouter} from "next/navigation";
 import {BottomMenu} from "@/fsd/shared/components/BottomMenu";
+import {useErrorHandler} from "@/fsd/shared/hooks/useErrorHandler";
 import clsx from "clsx";
 
 interface ClientPageProps {
@@ -17,6 +18,10 @@ export const ClientPage = ({
                                hideMenuButton
                            }: ClientPageProps) => {
     const router = useRouter()
+    
+    // Инициализируем глобальную обработку ошибок
+    useErrorHandler();
+    
     useEffect(() => {
         if (displayBackButton) {
             showBackButton();

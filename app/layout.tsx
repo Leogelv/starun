@@ -3,6 +3,7 @@ import {Inter, Poppins} from "next/font/google";
 import "../fsd/app/styles/globals.css";
 import {ReactQueryProvider} from "@/fsd/app/providers/ReactQueryProvider";
 import AntdWrapper from "@/fsd/app/providers/AntdWrapper";
+import {ErrorBoundary} from "@/fsd/shared/components/ErrorBoundary";
 
 
 const inter = Inter({
@@ -31,13 +32,15 @@ export default function RootLayout({
         <body
             className={`${inter.variable} ${poppins.variable} antialiased font-inter`}
         >
-        <ReactQueryProvider>
-            <AntdWrapper>
-                <main>
-                    {children}
-                </main>
-            </AntdWrapper>
-        </ReactQueryProvider>
+        <ErrorBoundary>
+            <ReactQueryProvider>
+                <AntdWrapper>
+                    <main>
+                        {children}
+                    </main>
+                </AntdWrapper>
+            </ReactQueryProvider>
+        </ErrorBoundary>
         </body>
         </html>
     );
