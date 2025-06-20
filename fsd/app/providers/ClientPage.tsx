@@ -23,14 +23,18 @@ export const ClientPage = ({
     useErrorHandler();
     
     useEffect(() => {
-        if (displayBackButton) {
-            showBackButton();
-            return onBackButtonClick(() => {
-                router.back();
-            });
+        try {
+            if (displayBackButton) {
+                showBackButton();
+                return onBackButtonClick(() => {
+                    router.back();
+                });
+            }
+            hideBackButton();
+        } catch (error) {
+            console.warn('Telegram SDK not ready for back button control:', error);
         }
-        hideBackButton();
-    }, [displayBackButton]);
+    }, [displayBackButton, router]);
     return (
         <div className={'flex flex-col min-h-screen pt-12 max-w-[600px] mx-auto px-3'}>
             <div className={clsx('flex-1', !hideMenuButton && 'pb-12')}>

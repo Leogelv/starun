@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_KEY!;
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 export async function GET(
   request: NextRequest,
@@ -14,7 +9,7 @@ export async function GET(
     const params = await context.params;
     const session_id = params.session_id;
     
-    const { data: messages, error } = await supabase
+    const { data: messages, error } = await supabaseServer
       .from('chat_history')
       .select('*')
       .eq('session_id', session_id)

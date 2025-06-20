@@ -1,15 +1,10 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_KEY!
-);
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 // GET /api/users - получение списка пользователей
 export async function GET() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('tg_users')
       .select('*')
       .order('created_at', { ascending: false });

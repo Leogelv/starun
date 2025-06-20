@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 
 interface ChatMessage {
   id: number;
@@ -12,10 +11,7 @@ interface ChatMessage {
   updated_at: string;
 }
 
-const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_KEY!;
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 export async function GET(
   request: NextRequest,
@@ -26,7 +22,7 @@ export async function GET(
     const telegram_id = parseInt(params.telegram_id);
     
     // Get all messages for this user
-    const { data: messages, error: messagesError } = await supabase
+    const { data: messages, error: messagesError } = await supabaseServer
       .from('chat_history')
       .select('*')
       .eq('telegram_id', telegram_id)

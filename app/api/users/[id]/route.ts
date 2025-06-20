@@ -1,10 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_KEY!
-);
+import { supabaseServer } from '@/fsd/shared/clients/supabaseServer';
 
 // GET /api/users/[id] - получение одного пользователя
 export async function GET(
@@ -13,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('tg_users')
       .select('*')
       .eq('id', id)
@@ -42,7 +37,7 @@ export async function PUT(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id: bodyId, telegram_id, created_at, ...updateData } = body;
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('tg_users')
       .update({
         ...updateData,
@@ -69,7 +64,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const { error } = await supabase
+    const { error } = await supabaseServer
       .from('tg_users')
       .delete()
       .eq('id', id);

@@ -1,4 +1,4 @@
-import {supabase} from "@/fsd/shared/clients/supabaseClient";
+import {supabaseServer} from "@/fsd/shared/clients/supabaseServer";
 import {NextResponse} from "next/server";
 
 export async function POST(request: Request) {
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
         }
         
         console.log('📤 Upserting user to Supabase:', res);
-        const { data, error } = await supabase
+        const { data, error } = await supabaseServer
             .from("tg_users")
             .upsert({...res}, { onConflict: 'telegram_id' })
             .select();
