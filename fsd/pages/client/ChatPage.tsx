@@ -190,7 +190,7 @@ export const ChatPage = () => {
           sessionId: currentSessionId,
           apiEndpoint: `${getApiBaseURL()}/chat`,
         },
-        user?.telegram_id || (telegramUser?.id !== undefined ? String(telegramUser.id) : undefined),
+                  user?.telegram_id ? String(user.telegram_id) : undefined,
         currentSessionId
       );
       
