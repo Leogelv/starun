@@ -23,6 +23,9 @@ class Logger {
   private async sendLog(data: LogData): Promise<void> {
     if (typeof window === 'undefined') return; // Только на клиенте
 
+    // Всегда логируем в консоль для отладки
+    console.log(`[Logger ${data.level.toUpperCase()}]`, data.message, data);
+
     try {
       const logData: LogData = {
         ...data,
@@ -30,13 +33,21 @@ class Logger {
         user_agent: data.user_agent || navigator.userAgent,
       };
 
-      await fetch(`${this.baseUrl}/api/logs`, {
+      const response = await fetch(`${this.baseUrl}/api/logs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(logData),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Log API returned error:', response.status, errorText);
+      } else {
+        const result = await response.json();
+        console.log('Log sent successfully:', result);
+      }
     } catch (error) {
       // Fallback на console если API недоступно
       console.error('Failed to send log to server:', error);
