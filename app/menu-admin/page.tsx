@@ -340,6 +340,19 @@ export default function MenuAdminPage() {
           background: var(--gradient-sky) !important;
           border-color: var(--cyan-neon) !important;
         }
+        .ant-alert {
+          background: rgba(135, 164, 216, 0.15) !important;
+          border-color: rgba(200, 215, 241, 0.3) !important;
+        }
+        .ant-alert-message {
+          color: var(--lunar-white) !important;
+        }
+        .ant-alert-description {
+          color: var(--arctic-light) !important;
+        }
+        .ant-alert-icon {
+          color: var(--electric-blue) !important;
+        }
       `}</style>
       <div className="sticky top-0 z-50 glass border-b border-arctic-light/20">
         <div className="max-w-7xl mx-auto px-4 py-6">
@@ -435,13 +448,14 @@ export default function MenuAdminPage() {
 
                   <Card className="mb-6 glass border-arctic-light/20">
                     <Title level={4} style={{ color: 'var(--lunar-white)' }}>🎯 Рекомендации для каталога</Title>
-                    <Row gutter={16}>
+                    <Row gutter={[24, 16]}>
                       <Col span={8}>
                         <Alert
                           message="Для каталога пользователей"
                           description={`Используйте ${analyzedData.totalStats.dishes} блюд и ${analyzedData.totalStats.goods} товаров из ${analyzedData.totalStats.visible} видимых`}
                           type="success"
                           showIcon
+                          className="mb-4"
                         />
                       </Col>
                       <Col span={8}>
@@ -450,6 +464,7 @@ export default function MenuAdminPage() {
                           description={`${analyzedData.totalStats.serviceGroups} служебных групп, ${analyzedData.totalStats.modifiers} модификаторов и ${analyzedData.totalStats.deleted} удаленных товаров`}
                           type="warning"
                           showIcon
+                          className="mb-4"
                         />
                       </Col>
                       <Col span={8}>
@@ -458,6 +473,7 @@ export default function MenuAdminPage() {
                           description={`Можно сократить JSON на ${Math.round((analyzedData.totalStats.deleted + analyzedData.totalStats.modifiers) / analyzedData.totalStats.totalProducts * 100)}% для каталога`}
                           type="info"
                           showIcon
+                          className="mb-4"
                         />
                       </Col>
                     </Row>
