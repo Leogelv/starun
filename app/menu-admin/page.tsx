@@ -229,10 +229,10 @@ export default function MenuAdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--night-sky-base)' }}>
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <Title level={3} className="text-white">Загрузка меню...</Title>
+          <div className="w-16 h-16 border-4 border-t-transparent rounded-full animate-spin mx-auto mb-4" style={{ borderColor: 'var(--electric-blue)', borderTopColor: 'transparent' }}></div>
+          <Title level={3} style={{ color: 'var(--lunar-white)' }}>Загрузка меню...</Title>
         </div>
       </div>
     )
@@ -240,7 +240,7 @@ export default function MenuAdminPage() {
 
   if (!analyzedData || menuData === 'error') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--night-sky-base)' }}>
         <div className="max-w-md mx-auto">
           <Alert 
             message="Файл menu.json не найден" 
@@ -248,17 +248,18 @@ export default function MenuAdminPage() {
             type="error" 
             showIcon 
           />
-          <Card className="mt-4 bg-gray-800 border-gray-700">
-            <Title level={4} className="text-white">📋 Инструкция:</Title>
-            <ol className="ml-4 space-y-2 text-gray-300">
-              <li>1. Получите JSON от iiko API: <code className="bg-gray-700 px-1 rounded">/api/1/nomenclature</code></li>
-              <li>2. Сохраните файл как <code className="bg-gray-700 px-1 rounded">public/menu.json</code></li>
+          <Card className="mt-4 glass border-arctic-light/20">
+            <Title level={4} style={{ color: 'var(--lunar-white)' }}>📋 Инструкция:</Title>
+            <ol className="ml-4 space-y-2" style={{ color: 'var(--arctic-light)' }}>
+              <li>1. Получите JSON от iiko API: <code className="px-1 rounded" style={{ background: 'var(--smoky-cards)/20', color: 'var(--cyan-neon)' }}>/api/1/nomenclature</code></li>
+              <li>2. Сохраните файл как <code className="px-1 rounded" style={{ background: 'var(--smoky-cards)/20', color: 'var(--cyan-neon)' }}>public/menu.json</code></li>
               <li>3. Обновите страницу</li>
             </ol>
             <Button 
               type="primary" 
               className="mt-4" 
               onClick={() => window.location.reload()}
+              style={{ background: 'var(--gradient-accent)', borderColor: 'var(--electric-blue)' }}
             >
               Попробовать снова
             </Button>
@@ -269,75 +270,111 @@ export default function MenuAdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen" style={{ background: 'var(--night-sky-base)' }}>
       <style jsx global>{`
         .ant-statistic-title {
-          color: #d1d5db !important;
+          color: var(--arctic-light) !important;
         }
         .ant-card {
-          background-color: #1f2937 !important;
-          border-color: #374151 !important;
+          background: var(--smoky-cards) !important;
+          background: rgba(135, 164, 216, 0.1) !important;
+          border-color: var(--arctic-light) !important;
+          border-color: rgba(200, 215, 241, 0.2) !important;
+          backdrop-filter: blur(12px) !important;
+          -webkit-backdrop-filter: blur(12px) !important;
         }
         .ant-tabs-tab {
-          color: #d1d5db !important;
+          color: var(--arctic-light) !important;
         }
         .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-          color: #60a5fa !important;
+          color: var(--electric-blue) !important;
         }
         .ant-tabs-ink-bar {
-          background: #60a5fa !important;
+          background: var(--electric-blue) !important;
         }
         .ant-collapse > .ant-collapse-item {
-          border-color: #374151 !important;
+          border-color: var(--arctic-light) !important;
+          border-color: rgba(200, 215, 241, 0.2) !important;
         }
         .ant-collapse-content {
-          background-color: #1f2937 !important;
-          border-color: #374151 !important;
+          background: rgba(135, 164, 216, 0.05) !important;
+          border-color: rgba(200, 215, 241, 0.2) !important;
         }
         .ant-collapse-header {
-          background-color: #1f2937 !important;
-          color: #d1d5db !important;
+          background: rgba(135, 164, 216, 0.1) !important;
+          color: var(--lunar-white) !important;
         }
         .ant-input {
-          background-color: #1f2937 !important;
-          border-color: #374151 !important;
-          color: #d1d5db !important;
+          background: rgba(135, 164, 216, 0.1) !important;
+          border-color: rgba(200, 215, 241, 0.3) !important;
+          color: var(--lunar-white) !important;
+        }
+        .ant-input::placeholder {
+          color: var(--arctic-light) !important;
         }
         .ant-select-selector {
-          background-color: #1f2937 !important;
-          border-color: #374151 !important;
-          color: #d1d5db !important;
+          background: rgba(135, 164, 216, 0.1) !important;
+          border-color: rgba(200, 215, 241, 0.3) !important;
+          color: var(--lunar-white) !important;
         }
         .ant-select-arrow {
-          color: #d1d5db !important;
+          color: var(--arctic-light) !important;
         }
         .ant-btn {
-          background-color: #374151 !important;
-          border-color: #4b5563 !important;
-          color: #d1d5db !important;
+          background: rgba(135, 164, 216, 0.2) !important;
+          border-color: var(--arctic-light) !important;
+          border-color: rgba(200, 215, 241, 0.3) !important;
+          color: var(--lunar-white) !important;
+        }
+        .ant-btn:hover {
+          background: rgba(135, 164, 216, 0.3) !important;
+          border-color: var(--electric-blue) !important;
+          color: var(--lunar-white) !important;
         }
         .ant-btn-primary {
-          background-color: #3b82f6 !important;
-          border-color: #2563eb !important;
+          background: var(--gradient-accent) !important;
+          border-color: var(--electric-blue) !important;
+          color: var(--lunar-white) !important;
+        }
+        .ant-btn-primary:hover {
+          background: var(--gradient-sky) !important;
+          border-color: var(--cyan-neon) !important;
         }
       `}</style>
-      <div className="bg-gray-800 shadow-sm border-b border-gray-700">
+      <div className="sticky top-0 z-50 glass border-b border-arctic-light/20">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <Title level={2} className="mb-2 text-white">🍽️ Админка меню iiko</Title>
-              <Text className="text-gray-300">
+              <Title level={2} className="mb-2" style={{ color: 'var(--lunar-white)' }}>🍽️ Админка меню iiko</Title>
+              <Text style={{ color: 'var(--arctic-light)' }}>
                 Анализ и управление номенклатурой ресторана • 
-                <Text className="text-green-400 font-medium ml-2">
+                <Text className="font-medium ml-2" style={{ color: 'var(--star-glow)' }}>
                   {analyzedData.totalStats.totalProducts.toLocaleString()} товаров
                 </Text>
               </Text>
             </div>
             <Space>
-              <Button icon={<ReloadOutlined />} onClick={() => window.location.reload()}>
+              <Button 
+                icon={<ReloadOutlined />} 
+                onClick={() => window.location.reload()}
+                style={{ 
+                  background: 'rgba(135, 164, 216, 0.2)', 
+                  borderColor: 'rgba(200, 215, 241, 0.3)',
+                  color: 'var(--lunar-white)'
+                }}
+              >
                 Обновить
               </Button>
-              <Button type="primary" icon={<DownloadOutlined />} onClick={exportCleanCatalog}>
+              <Button 
+                type="primary" 
+                icon={<DownloadOutlined />} 
+                onClick={exportCleanCatalog}
+                style={{ 
+                  background: 'var(--gradient-accent)', 
+                  borderColor: 'var(--electric-blue)',
+                  color: 'var(--lunar-white)'
+                }}
+              >
                 Экспорт каталога
               </Button>
             </Space>
@@ -358,46 +395,46 @@ export default function MenuAdminPage() {
                 <div>
                   <Row gutter={[16, 16]} className="mb-6">
                     <Col span={6}>
-                      <Card className="bg-gray-800 border-gray-700">
-                        <Statistic title="Всего товаров" value={analyzedData.totalStats.totalProducts} valueStyle={{ color: '#60a5fa' }} />
+                      <Card className="glass border-arctic-light/20">
+                        <Statistic title="Всего товаров" value={analyzedData.totalStats.totalProducts} valueStyle={{ color: 'var(--electric-blue)' }} />
                       </Card>
                     </Col>
                     <Col span={6}>
-                      <Card className="bg-gray-800 border-gray-700">
-                        <Statistic title="Блюда" value={analyzedData.totalStats.dishes} valueStyle={{ color: '#34d399' }} />
+                      <Card className="glass border-arctic-light/20">
+                        <Statistic title="Блюда" value={analyzedData.totalStats.dishes} valueStyle={{ color: 'var(--star-glow)' }} />
                       </Card>
                     </Col>
                     <Col span={6}>
-                      <Card className="bg-gray-800 border-gray-700">
-                        <Statistic title="Модификаторы" value={analyzedData.totalStats.modifiers} valueStyle={{ color: '#a78bfa' }} />
+                      <Card className="glass border-arctic-light/20">
+                        <Statistic title="Модификаторы" value={analyzedData.totalStats.modifiers} valueStyle={{ color: 'var(--ultra-violet)' }} />
                       </Card>
                     </Col>
                     <Col span={6}>
-                      <Card className="bg-gray-800 border-gray-700">
-                        <Statistic title="Товары (Good)" value={analyzedData.totalStats.goods} valueStyle={{ color: '#fbbf24' }} />
+                      <Card className="glass border-arctic-light/20">
+                        <Statistic title="Товары (Good)" value={analyzedData.totalStats.goods} valueStyle={{ color: 'var(--cyan-neon)' }} />
                       </Card>
                     </Col>
                   </Row>
                   <Row gutter={[16, 16]} className="mb-6">
                     <Col span={8}>
-                      <Card className="bg-gray-800 border-gray-700">
-                        <Statistic title="Видимые" value={analyzedData.totalStats.visible} valueStyle={{ color: '#34d399' }} />
+                      <Card className="glass border-arctic-light/20">
+                        <Statistic title="Видимые" value={analyzedData.totalStats.visible} valueStyle={{ color: 'var(--star-glow)' }} />
                       </Card>
                     </Col>
                     <Col span={8}>
-                      <Card className="bg-gray-800 border-gray-700">
-                        <Statistic title="С изображениями" value={analyzedData.totalStats.withImages} valueStyle={{ color: '#fb923c' }} />
+                      <Card className="glass border-arctic-light/20">
+                        <Statistic title="С изображениями" value={analyzedData.totalStats.withImages} valueStyle={{ color: 'var(--cyan-neon)' }} />
                       </Card>
                     </Col>
                     <Col span={8}>
-                      <Card className="bg-gray-800 border-gray-700">
-                        <Statistic title="Удаленные" value={analyzedData.totalStats.deleted} valueStyle={{ color: '#f87171' }} />
+                      <Card className="glass border-arctic-light/20">
+                        <Statistic title="Удаленные" value={analyzedData.totalStats.deleted} valueStyle={{ color: '#ff6b6b' }} />
                       </Card>
                     </Col>
                   </Row>
 
-                  <Card className="mb-6 bg-gray-800 border-gray-700">
-                    <Title level={4} className="text-white">🎯 Рекомендации для каталога</Title>
+                  <Card className="mb-6 glass border-arctic-light/20">
+                    <Title level={4} style={{ color: 'var(--lunar-white)' }}>🎯 Рекомендации для каталога</Title>
                     <Row gutter={16}>
                       <Col span={8}>
                         <Alert
@@ -433,8 +470,8 @@ export default function MenuAdminPage() {
               label: '🔍 Анализ товаров',
               children: (
                 <div>
-                  <Card className="mb-6 bg-gray-800 border-gray-700">
-                    <Title level={4} className="text-white">🔧 Фильтры и поиск</Title>
+                  <Card className="mb-6 glass border-arctic-light/20">
+                    <Title level={4} style={{ color: 'var(--lunar-white)' }}>🔧 Фильтры и поиск</Title>
                     <Row gutter={16}>
                       <Col span={8}>
                         <Input
@@ -471,14 +508,14 @@ export default function MenuAdminPage() {
                       </Col>
                     </Row>
                     <div className="mt-4">
-                      <Text className="text-gray-300">
-                        Найдено: <Text strong className="text-white">{analyzedData.totalStats.filteredCount}</Text> товаров
+                      <Text style={{ color: 'var(--arctic-light)' }}>
+                        Найдено: <Text strong style={{ color: 'var(--lunar-white)' }}>{analyzedData.totalStats.filteredCount}</Text> товаров
                       </Text>
                     </div>
                   </Card>
 
-                  <Card className="bg-gray-800 border-gray-700">
-                    <Title level={4} className="text-white">🗂️ Товары по категориям</Title>
+                  <Card className="glass border-arctic-light/20">
+                    <Title level={4} style={{ color: 'var(--lunar-white)' }}>🗂️ Товары по категориям</Title>
                     <Collapse
                       items={Object.entries(analyzedData.productsByCategory)
                         .sort(([a], [b]) => a.localeCompare(b))
@@ -501,19 +538,19 @@ export default function MenuAdminPage() {
                                 <Card 
                                   key={product.id} 
                                   size="small" 
-                                  className="mb-2 bg-gray-700 border-gray-600"
+                                  className="mb-2 glass border-arctic-light/20"
                                   style={{ 
                                     borderLeft: `4px solid ${
-                                      product.isDeleted ? '#f87171' : 
-                                      product.isVisible ? '#34d399' : '#fbbf24'
+                                      product.isDeleted ? '#ff6b6b' : 
+                                      product.isVisible ? 'var(--star-glow)' : 'var(--cyan-neon)'
                                     }`
                                   }}
                                 >
                                   <Row>
                                     <Col span={12}>
-                                      <Text strong className="text-white">{product.name}</Text>
+                                      <Text strong style={{ color: 'var(--lunar-white)' }}>{product.name}</Text>
                                       <br />
-                                      <Text className="text-gray-400" style={{ fontSize: '12px' }}>
+                                      <Text style={{ color: 'var(--arctic-light)', fontSize: '12px' }}>
                                         {product.groupName}
                                       </Text>
                                     </Col>
@@ -526,7 +563,7 @@ export default function MenuAdminPage() {
                                       </Tag>
                                     </Col>
                                     <Col span={3}>
-                                      <Text className="text-gray-300">{product.price > 0 ? `${product.price}₽` : 'Бесплатно'}</Text>
+                                      <Text style={{ color: 'var(--arctic-light)' }}>{product.price > 0 ? `${product.price}₽` : 'Бесплатно'}</Text>
                                     </Col>
                                     <Col span={3}>
                                       <Tag color={
